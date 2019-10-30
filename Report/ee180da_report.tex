@@ -1,0 +1,100 @@
+\documentclass[12pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage[section]{placeins}
+\usepackage{calc}
+\usepackage{amsmath}
+
+\usepackage{listings}
+\usepackage{color} %red, green, blue, yellow, cyan, magenta, black, white
+\definecolor{mygreen}{RGB}{28,172,0} % color values Red, Green, Blue
+\definecolor{mylilas}{RGB}{170,55,241}
+
+\graphicspath{{./images/}}
+\title{ECE180DA Midterm Report}
+\author{Joey Miller, Xilai Zhang, Jorge Hurtado, Patrick Chau}
+\date{10/31/2019}
+\begin{document}
+%% MATLAB styling
+\lstset{language=Matlab,%
+    %basicstyle=\color{red},
+    breaklines=true,%
+    morekeywords={matlab2tikz},
+    keywordstyle=\color{blue},%
+    morekeywords=[2]{1}, keywordstyle=[2]{\color{black}},
+    identifierstyle=\color{black},%
+    stringstyle=\color{mylilas},
+    commentstyle=\color{mygreen},%
+    showstringspaces=false,%without this there will be a symbol in the places where there is a space
+    numbers=left,%
+    numberstyle={\tiny \color{black}},% size of the numbers
+    numbersep=9pt, % this defines how far the numbers are from the text
+    emph=[1]{for,end,break},emphstyle=[1]\color{red}, %some words to emphasise
+    %emph=[2]{word1,word2}, emphstyle=[2]{style},    
+}
+\maketitle
+\section{Introduction}
+
+The overarching goal of this project is to design and develop a large scale system that allows for the display of some uniform pattern or letter across the graduation caps of all the associated members. 
+
+    \subsection{Objectives}
+    The key objectives which must show through in our design is the ability to see the collective display from far away in a well-lit environment. This display must be able to accomodate up to 80 people and the students will not necessarily be all grouped together but all the caps must still be able to communicate to each other, indicating a need for a robust and wide range communication protocol. The environment will be very noisy volume-wise and the power consumption of the cap must be low or enough capacity be allotted such that the caps will stay on for the whole ceremony. These components will work together to, in the end, display a snaking pattern of blue and gold to be displayed across the caps. 
+
+    \subsection{Functionalities}
+    In addition to these objectives our system must cover, we also have some core functionalities that we wish to achieve with the system. To describe the snaking pattern more in depth, it will start in the front row on the leftmost position and pass left to right. Upon hitting the end of the row, it will move back a row and reverse direction, going right to left, following this pattern until it hits the last person wearing a modified cap. This function depends on understanding relative positions of each person. We make the assumption that once a person has seated, they will not change seats. Therefore we can wait until everyone has seated and then determine position. Our plan to do this is that we will pass some token, beginning from the front left person. This person will press a button on their cap to send a signal to the server which will then assign them a position based on row and position. For example the front left person will be row 1, position 1 then pass the token along. Then the next person with a modified cap will press the button on his or her cap upon receiving this token and they will then be row 1, position 2 and so on. Each person before passing the token will wait for a predetermined timeout period for feedback from the server in the form of an LED, indicating that they have successfully received their position. Once receiving this feedback, they will pass the token on. These positions will be saved in an array for reference. The row changes will be determined by pressing a button on the token itself when a person with the modified cap passes it back. The token will also be connected to the server and uniquely identified by its IP address, as will all the caps. This will continue all the way down until the last person participating has received their relative position upon which that person will press a secondary button on the token indicating the end of the setup phase. This of course depends on the token successfully making it all the way down row by row and column by column without being tampered with. 
+
+    Once the setup period of determining positions and collecting unique IP address for each participant, the sequence will begin, snaking its way across and down all the students. In addition to the passive process, we will also include a sensor suite to add gesture recognition to the caps. This will require the implementation of an IMU interfacing with the Raspberry Pi. Currently the plan is to use taps on the caps and tilting the cap to input commands which will 
+
+    Additionally, we want it such that once a student gets up to walk or otherwise moves away from the group, their cap will cease the snaking routine and run a different routine of that student's choosing individually. This can be detected through sustained and repetitive Z-axis acceleration as the person walks, again using the IMU. Once this is detected, the client will signal to the server that this unit has left and so the server will skip that unit until they return. A return can be indicated with the press of a button, the same used to initially determine position. 
+
+
+
+
+\section {System Overview}
+
+\section {Hardware}
+
+
+\section {Communications}
+In this section we'll discuss the communication protocol to be used and how we arrived at this conclusion. The main criteria we looked at were range and robustness even in a noisy environment. Secondly were considerations of cost and ease of implementation. The protocols we discussed were Wifi, Bluetooth, and Zigbee communication. 
+
+    \subsection{Considerations}
+    Our initial consideration is Wifi. It's very easy to work within our framework and we can easily setup connections for all clients to the other server. The usage of Wifi is also preferrable given the Raspberry Pis have Wifi cards built in and can even be configured as an access point so this saves somewhat on cost. The specified range for Wifi for our Raspberry Pi Zero W is up to 100m although it should be expected that the range indoors will be much lower. This can be remedied with the purchase of an external antenna but we'll ideally only need 1 for the designated access point. The con here is that we'll have a single access point and many clients all within close proximity to one another, which will lead to significant signal interference. How much is yet to be seen but without knowing more about the conditions, it's hard to say if it'll be a significant problem. 
+
+    Bluetooth is also considered. Bluetooth transfers over the same frequency band as Wifi. Its strength mainly lies in communication between two points, with expansion up to 7 clients in a master-slave setup. By having a system like these, all the devices are automatically synced to the master's clock, which is very useful. However we desire a system that will be communicating with many clients so while it will work for a simple prototype, there would be no way to scale up using Bluetooth. Additionally the Raspberry Pi doesn't natively support a Bluetooth communication so a shield for the Pi would be necessary, incurring an additional cost. Finally the range matter of  In the end, it's determined that the strengths of Bluetooth don't fully align with our goals for this system.
+
+    Zigbee is a radio based communication protocol based on the IEEE 802.15.4 specification. It has an upper limit of 100m line-of-sight. Zigbees can be attached to each Raspberry Pi and they would communicate . Their rated over-the-air communication link is 250MB/s which is more than enough for the small data packets that we're planning on sending over our network as detailed in our server-client descriptions. Zigbees have low power consumption, which aids in the long runtime that we're planning on having over the course of the ceremony. Zigbees also have a strong . The Zigbee architecture requires 3 components - a coordinator, a router and the end devices. This would require extra hardware as these coordinator nodes are seperate large components which likely won't last long on a battery pack. The Zigbee routers Zigbee, if the Wifi signal interference proves to be too great, would be our backup communication protocol. 
+
+\section {Server}
+
+\section {Client}
+
+\section {Testing Procedure}
+
+\section {Proposed Timeline}
+
+\section {Stretch Goals}
+
+\section{References}
+\begin{thebibliography}{9}
+
+\bibitem{}{https://www.sciencedirect.com/topics/computer-science/zigbee-coordinator}
+\bibitem{}{https://www.sciencedirect.com/topics/computer-science/zigbee-coordinator}
+
+\end{thebibliography}
+
+
+
+%\begin{figure}[!htb]
+%\includegraphics{images/unfiltered.PNG}
+%\caption{This is our original unfiltered image. Beautiful.}
+%\end{figure}
+
+
+\section{MATLAB Code}
+%\lstinputlisting{ca7.m}
+
+
+\end{document}
