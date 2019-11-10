@@ -24,6 +24,12 @@ lightUp=[]
 interval=1
 
 def each_client(c):
+    global macToClient
+    global macToId
+    global size
+    global id
+    global dummyHead
+    global tail
     macId=None
     while True:
         buffer=None
@@ -103,6 +109,10 @@ def lookForConnection(serv):
     serv.close()
     
 def loopThrough():
+    global lightUp
+    global interval
+    global startPointer
+    global dummyHead
     while size>1:
         time.delay(5) #lets move the snake every 5 secs
         lightUp=[]
