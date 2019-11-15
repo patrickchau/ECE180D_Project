@@ -1,0 +1,42 @@
+#Client:
+
+def getMAC(interface='wlan0'):
+  # Return the MAC address of the specified interface
+  try:
+    str = open('/sys/class/net/%s/address' %interface).read()
+  except:
+    str = "00:00:00:00:00:00"
+  return str[0:17]
+  
+  
+import pygame as game
+import pygame.camera
+import sys
+import time
+from PIL import Image
+
+
+port=9012 
+address="192.168.1.10" #server's ip make our own
+timer=0
+
+game.init()
+game.camera.init()
+screen=game.display.set_mode(size)
+
+camera=game.camera.Camera("/dev/video0", size )
+camera.start()
+time.sleep(1)
+while True:
+  if timer < 1:
+    #connect to the server
+    s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((address, port))
+
+    #get MAC address
+    MAC=getMAC()
+	
+    s.sendall(MAC)
+    #time.sleep(0.01)
+    s.close()
+    timer=30
