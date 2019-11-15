@@ -52,8 +52,8 @@ def each_client(c):
                 data="closed"
                 c.send(data)
                 break
-        
-        type,msg=buffer.split(",") #assume clinet sends in this format
+
+        type,msg=buffer.split(',') #assume client sends in this format
         if type=="start":
             if macId:
                 data="client already exist"
