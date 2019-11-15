@@ -18,6 +18,7 @@ def readServer(): # take in server messages
 def contolLED(): # run the LED sequence based on server input
 
 def readIMU(): # take in IMU data and analyze it somehow
+  
 
 
 def sendMAC(host, port):
@@ -36,6 +37,5 @@ def runClient():
   sendMAC(host, port) # send over the MAC address for the 
   client.close()
   
-
 if __name__ == "__main__":
   runClient()
