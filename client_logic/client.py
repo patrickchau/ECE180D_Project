@@ -1,6 +1,5 @@
 import socket
 import IMU
-# import berryIMU
 import RPi.GPIO as GPIO
 import time
 import datetime
@@ -17,8 +16,6 @@ _LED1 = 18
 _LED2 = 19
 _LED3 = 20
 _LED4 = 21
-row = 5
-col = 5 
 i_time = 0
 
 def getMAC(interface='wlan0'):
@@ -31,13 +28,13 @@ def getMAC(interface='wlan0'):
 
 def gestures(): # recognize gestures
   # once we know what walking looks like in terms of accelerations, we can set thresholds
-  #a_x, a_y, a_z = readIMU()
+  # a_x, a_y, a_z = readIMU()
   # take the time average of total acceleration and if its higher
   # than the average acceleration of a person sitting, then theyre moving
   # first pull the most recent 50 norms of accel from the file
   return 1
 
-def sendPosition(): # collect row and position 
+def sendPosition(): # request row and position
   # if a button is pressed, then send a message to server to collect position
   if GPIO.input(_POS_SWITCH) == True:
     sendMessage("position") # TODO: add position option to server receive
@@ -75,7 +72,6 @@ def initIMU():
   f.close()
   return 1
 
-
 def readIMU(): # take in IMU data and analyze it somehow
   ACCx = IMU.readACCx()
   ACCy = IMU.readACCy()
@@ -85,7 +81,7 @@ def readIMU(): # take in IMU data and analyze it somehow
   f = open("accel.csv", "a+")   # append to file
   f.write(str(t_stamp) + "," + str(ACCx) + "," + str(ACCy) + "," + str(ACCz) + "," + ACC_norm + "\n"  )
   f.close()
-  return (ACCx, ACCy, ACCz)
+  return (ACCx, ACCy, ACCz, ACC_norm)
 
 def setGPIO():
   GPIO.setmode(GPIO.BCM)
@@ -106,8 +102,13 @@ def sendMessage( type, client ): # send messages to the server
     message = "close,a"
   elif type == "position":
     # send the position of the client to the server
-    message = "position," + str(row) + "." + str(col)
+    # data field doesn't matter since row, col taken from token
+    message = "position," 
   client.send(message.encode('utf-8'))
+  return 1
+
+def checkClose(): # check if we need to close connection, if so set closeCondition true
+  readIMU()
   return 1
 
 def runClient():
@@ -115,18 +116,16 @@ def runClient():
   i_time = datetime.datetime.now() # get start time
   # initiate connection to server
   client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-  #socket.setblocking(0) # sets it such that receives do not block, raises error
   client.connect((host, port))
   time.sleep(5) # allow for time for handshake to complete
   sendMessage("start", client) # send over the MAC address for this pi
-  setGPIO()
-  initIMU()
-  time.sleep(5)
-  sendMessage("start", client) # see if we deny second connection from same client
+  setGPIO() # set all GPIO pins
+  initIMU() # detect and start IMU
   print(client.recv(_BAUDRATE).decode('utf-8'))
   while True:
     gestures()
     controlLED(c)
+    checkClose()
     # close condition set when person is walking away(leaving server)
     if(closeCondition):
       print("now closing")
