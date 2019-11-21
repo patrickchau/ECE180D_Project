@@ -1,15 +1,18 @@
 #!/usr/local/bin/python3.7
+# each client must have an IP, MAC, row, col associated
 class client:
-    def __init__(self):
-        self.macId=None
-        self.next=None
-        self.prev=None
+    def __init__(self, mac):
+        self.macId=mac
+        self.ipAddr = None
+        self.row=None
+        self.col=None
 
 from collections import defaultdict
 import socket
 from _thread import *
 import threading
 import time
+
 macToClient=defaultdict(client)
 macToId=defaultdict(int)
 print_lock=threading.Lock()
@@ -37,7 +40,7 @@ def each_client(c):
         c.settimeout(10) #timeout 10 secs for now,client need to constantly send msg
         try:
             buffer=c.recv(4096).decode('utf-8')
-            print(buffer + "it worked!")
+            print("received message: " + buffer)
         except socket.timeout:
             print_lock.acquire()
             print("time out occured on ",c)
@@ -54,11 +57,13 @@ def each_client(c):
                 c.send(data.encode('utf-8'))
                 break
         
-        type,msg=buffer.split(",") #assume client sends in this format
-        if type=="start":
+        # Block to parse all possible client inputs
+        _type,msg=buffer.split(",") #assume client sends in this format
+        print("type: " + _type)
+        if _type=="start":
             print("this is a start message!")
             if macId:
-                data="client already exist"
+                data="client already exists"
                 c.send(data.encode('utf-8'))
                 continue
             print_lock.acquire()
@@ -70,6 +75,12 @@ def each_client(c):
             newClient.macId=msg
 
             addLock.acquire()
+            clientList.append(newClient)
+            macToClient[macId]=newClient
+            size+=1
+            id+=1
+            macToId[macId]=id
+            """
             newClient.prev=tail
             tail.next=newClient
             newClient.next=dummyHead
@@ -79,14 +90,19 @@ def each_client(c):
             size+=1
             id+=1
             macToId[macId]=id
+            """
             addLock.release()
             data="registered"
             c.send(data.encode('utf-8'))
-        elif type=="close":
+        elif _type=="close":
+            print("this is a closing message")
+            print("mac id: " + macId)
             target=macToClient[macId]
             addLock.acquire()
-            target.prev.next=target.next
-            target.next.prev=target.prev
+            if not target.next:
+                target.prev.next=target.next
+            if not target.prev:
+                target.next.prev=target.prev
             del macToClient[macId]
             del macToId[macId]
             size-=1
@@ -94,9 +110,18 @@ def each_client(c):
             data="closed"
             c.send(data.encode('utf-8'))
             break
+        elif _type=="position": # position message of format "position, row.col"
+            print("now getting row and column from hardware token")
+            r,c = msg.split('.')
+            macToClient[macId].row = r
+            macToClient[macId].col = c
+        # block to send data to client
         if macId in lightUp:
             data="lightUp"
             c.send(data.encode('utf-8'))
+
+    #if we break from the while True, close the client connection.
+    # this should only happen when we send a close statement
     c.close()
 
 def lookForConnection(serv):
@@ -105,12 +130,13 @@ def lookForConnection(serv):
         print_lock.acquire()
         print("connection established")
         print_lock.release()
-        print(c.recv(4096).decode('utf-8')) # debug
         start_new_thread(each_client,(c,))
     serv.close()
     
 def loopThrough():
-    global lightUp
+    # set the global variable lightup to be desired client
+    # lit up
+    """global lightUp
     global interval
     global startPointer
     global dummyHead
@@ -125,7 +151,7 @@ def loopThrough():
                 lightUp.append(loopPointer.macId)
                 steps-=1
             loopPointer=loopPointer.next
-        addLock.release()
+        addLock.release()"""
 
 def runServer():
     host="192.168.4.1"
