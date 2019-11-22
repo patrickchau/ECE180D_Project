@@ -24,10 +24,11 @@ tail=dummyHead
 startPointer=dummyHead
 lightUp=[]
 interval=1
+mode=0
+hwUp=False
+lastPerson=None
 
 def each_client(c):
-    global macToRow
-    global macToCol
     global macToClient
     global macToId
     global size
@@ -67,12 +68,10 @@ def each_client(c):
             print("add a new client ",c)
             print_lock.release()
             
-            macId,row,col=msg.split('.')
+            macId=msg
             newClient=client()
             newClient.macId=macId
-            newClient.row=row
-            newClient.col=col
-
+            
             addLock.acquire()
             newClient.prev=tail
             tail.next=newClient
@@ -83,6 +82,7 @@ def each_client(c):
             size+=1
             id+=1
             macToId[macId]=id
+            lastPerson=newClient
             addLock.release()
             data="registered"
             c.send(data)
@@ -99,6 +99,16 @@ def each_client(c):
             data="closed"
             c.send(data)
             break
+        elif type=="hw":
+            row,col=msg.split(".")
+            lastPerson.col=col
+            lastPerson.row=row
+            key=lastPerson.macId
+            addLock.acquire()
+            macToClient[key]=lastPerson
+            addLock.release()
+            data="hw_ack"
+            c.send(data)
         if macId in lightUp:
             data="lightUp"
             c.send(data)
@@ -119,21 +129,27 @@ def loopThrough():
     global interval
     global startPointer
     global dummyHead
-    while size>1:
-        time.delay(5) #lets move the snake every 5 secs
-        lightUp=[]
-        steps=interval
-        loopPointer=startPointer
-        addLock.acquire()
-        while steps>0:
-            if loopPointer!=dummyHead:
-                lightUp.append(loopPointer.macId)
-                #you can print stuff like row, and col here, eg.
-                print(str(loopPointer.row)+" "+str(loopPointer.col)) 
-                steps-=1
-            loopPointer=loopPointer.next
-        startPointer+=1
-        addLock.release()
+    global mode
+    time.delay(5) 
+    lightUp=[]
+    if mode==0:
+        while size>1:            
+            steps=interval
+            loopPointer=startPointer
+            addLock.acquire()
+            while steps>0:
+                if loopPointer!=dummyHead:
+                    lightUp.append(loopPointer.macId)
+                    #you can print stuff like row, and col here, eg.
+                    print(str(loopPointer.row)+" "+str(loopPointer.col)) 
+                    steps-=1
+                loopPointer=loopPointer.next
+            startPointer+=1
+            addLock.release()
+    elif mode==1 and size>=5:
+        
+        
+
 
 def runServer():
     host=""
