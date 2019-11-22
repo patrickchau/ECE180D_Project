@@ -81,6 +81,16 @@ const int FAILED_CONN = 1;
 #define FOREVER 1
 const int usec_delay = 100; //usec
 
+// Threads
+pthread_mutex_t lock;
+
+// Rows and Cols
+int row_pos_ones = 0;
+int row_pos_tens = 0;
+int col_pos_ones = 0;
+int col_pos_tens = 0;   
+
+//Function Declarations
 void blink_segment(const int seg, int num_to_display, int usec_delay);
 void init_pins();
 void* run_display(void* arg);
@@ -98,9 +108,12 @@ int main(void)
     // Attempt communication with server
     while(attempt_connection(&sockfd));
 
-    // Start threads
+    // Init threads
     pthread_t network_thread = 0;
     pthread_t hardware_thread = 1; 
+
+    // Init mutex
+    pthread_mutex_init(&lock, NULL);
      
     // Communicate with server
     pthread_create(&network_thread, NULL, server_communication, &sockfd);
@@ -153,10 +166,6 @@ void init_pins(){
 
 void* run_display(void* arg) {
     
-    int row_pos_ones = 0;
-    int row_pos_tens = 0;
-    int col_pos_ones = 0;
-    int col_pos_tens = 0;   
     int switch_on = 0;
     int button1_off = 1;
     int button1_held = 0;
@@ -168,21 +177,24 @@ void* run_display(void* arg) {
         button1_off = digitalRead(BN1);
         button2_off = digitalRead(BN2);
 
-        if(switch_on){
-            if(!button1_off && !button1_held){
+        if(switch_on) {
+            if(!button1_off && !button1_held) {
+                pthread_mutex_lock(&lock);
                 row_pos_ones = row_pos_ones + 1;
                 if(row_pos_ones > 9) {
                     row_pos_tens = row_pos_tens + 1;
                     row_pos_ones = 0;
-                    if(row_pos_tens > 9){
+                    if(row_pos_tens > 9) {
                         row_pos_tens = 0;
                     } 
                 }
+                pthread_mutex_unlock(&lock);
                 button1_held = 1;
-            } else if(button1_off){
+            } else if(button1_off) {
                 button1_held = 0;
               }
-                if(!button2_off && !button2_held){
+                if(!button2_off && !button2_held) {
+                    pthread_mutex_lock(&lock);
                     row_pos_ones = row_pos_ones - 1;
                     if(row_pos_ones < 0){
                         row_pos_tens = row_pos_tens - 1;
@@ -191,29 +203,35 @@ void* run_display(void* arg) {
                             row_pos_tens = 9;
                         }
                     }
-                button2_held = 1;
+                    pthread_mutex_unlock(&lock);
+                    button2_held = 1;
                 } else if(button2_off){
                     button2_held = 0;
             }
+
+            // Other thread only reads from globals so no need for lock
             blink_segment(S2, row_pos_tens , usec_delay);
             blink_segment(S3, row_pos_ones , usec_delay);
             blink_segment(S1, LOWERCASE_R, usec_delay);
         }
         else{
             if(!button1_off && !button1_held){
-                    col_pos_ones = col_pos_ones + 1;
+                pthread_mutex_lock(&lock);
+                col_pos_ones = col_pos_ones + 1;
                 if(col_pos_ones > 9) {
                     col_pos_tens = col_pos_tens + 1;
                     col_pos_ones = 0;
-                if(col_pos_tens > 9){
-                    col_pos_tens = 0;
-                } 
+                    if(col_pos_tens > 9) {
+                        col_pos_tens = 0;
+                    } 
                 }
+                pthread_mutex_unlock(&lock);
                 button1_held = 1;
                 } else if(button1_off){
                     button1_held = 0;
                 }
                 if(!button2_off && !button2_held){
+                    pthread_mutex_lock(&lock);
                     col_pos_ones = col_pos_ones - 1;
                     if(col_pos_ones < 0){
                         col_pos_tens = col_pos_tens - 1;
@@ -222,10 +240,13 @@ void* run_display(void* arg) {
                             col_pos_tens = 9;
                         }
                     }
+                    pthread_mutex_unlock(&lock);
                 button2_held = 1;
                 } else if(button2_off){
                     button2_held = 0;
             }
+
+            // Other thread only reads from globals so no need for lock
             blink_segment(S2, col_pos_tens , usec_delay);
             blink_segment(S3, col_pos_ones , usec_delay);
             blink_segment(S1, LOWERCASE_C, usec_delay);
@@ -309,26 +330,40 @@ void* server_communication(void* arg)
 
     // Write filepath to file containing MAC ADDR
     sprintf(msg, "start,%s", MAC_ADDR);
-    fprintf(stdout, "%s\n", msg);
+    fprintf(stdout, "Token sent: %s\n", msg);
 
     // Deliver MAC_ADDR to server
     write(sockfd, msg, sizeof(msg));
-    delay(1000);
     
     while (FOREVER) { 
-        bzero(msg, sizeof(msg)); 
+        
+        // Give server a chance to read and send messages
+        delay(1000);
+
+        // Read data from server
+        bzero(msg, sizeof(msg));
         read(sockfd, msg, sizeof(msg));
         fprintf(stdout, "Server Returned: %s\n", msg);
 
-        if ((strncmp(msg, "exit", 4)) == 0) { 
-            printf("Client Exit...\n");
-            break; 
-        }
+        if((strncmp(msg, "position", 8)) == 0) { 
+            // Calculate row and col for token
+            pthread_mutex_lock(&lock);
+            int row = row_pos_tens*10 + row_pos_ones;
+            int col = col_pos_tens*10 + col_pos_ones;
+            pthread_mutex_unlock(&lock);
 
-        // Ping server to let it know we are still connected
-        write(sockfd, msg_nothing, sizeof(msg_nothing));
-        delay(1000);
-    } 
+            // Format string for delivery
+            bzero(msg, sizeof(msg));
+            sprintf(msg, "Token sent: position,%d.%d", row, col);
+            write(sockfd, msg, sizeof(msg));
+            fprintf(stdout, "%s\n", msg);
+        }
+        else {
+            // Ping server to let it know we are still connected
+            write(sockfd, msg_nothing, sizeof(msg_nothing));
+            fprintf(stdout, "Nothing to send, pinging server\n");
+        }
+    }
 
     return NULL;
 } 
