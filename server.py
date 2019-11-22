@@ -112,6 +112,9 @@ def each_client(c):
         if macId in lightUp:
             data="lightUp"
             c.send(data)
+        else:
+            data="turn off"
+            c.send(data)
     c.close()
 
 def lookForConnection(serv):
