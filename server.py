@@ -24,7 +24,7 @@ tail=dummyHead
 startPointer=dummyHead
 lightUp=[]
 interval=1
-mode=0
+mode=0 #0 for snake, 1 for 'U'
 hwUp=False
 lastPerson=None
 
@@ -133,7 +133,7 @@ def loopThrough():
     global startPointer
     global dummyHead
     global mode
-    time.delay(5) 
+    time.sleep(5) 
     lightUp=[]
     if mode==0:
         while size>1:            
@@ -149,10 +149,30 @@ def loopThrough():
                 loopPointer=loopPointer.next
             startPointer+=1
             addLock.release()
-    elif mode==1 and size>=5:
-        
-        
-
+    else:
+        clientList=[macToClient[key] for key in macToClient]
+        rowList=sorted(clientList,key=lambda x:x.row)
+        colList=sorted(clientList,key=lambda x:x.col)
+        leftBound=colList[0].col
+        rightBound=colList[size-1].col
+        upBound=rowList[size-1].row
+        lowBound=rowList[0].row
+    if mode==1 and size>5:
+        r1,r2,r3,r4,r5=[],[],[],[],[]
+        for client in clientList:
+            r,c=client.row,client.col
+            if ( c<=leftBound+(rightBound-leftBound)/3 and r>lowBound+(upBound-lowBound)/3 ):
+                r1.append(client)
+            if ( c<=leftBound+(rightBound-leftBound)/3 and r<=lowBound+(upBound-lowBound)/3 ):
+                r2.append(client)
+            if ( ( c>leftBound+(rightBound-leftBound)/3 and c<=leftBound+2*(rightBound-leftBound)/3 ) and ( r<=lowBound+(upBound-lowBound)/3 ) ):
+                r3.append(client)
+            if ( c> leftBound + 2*(rightBound-leftBound)/3 and r<=lowBound+(upBound-lowBound)/3 ):
+                r4.append(client)
+            if ( c>=leftBound + 2*(rightBound-leftBound)/3 and r>lowBound+(upBound-lowBound)/3 ):
+                r5.append(client)
+        if r1 and r2 and r3 and r4 and r5:
+            LightUp=r1+r2+r3+r4+r5
 
 def runServer():
     host=""
