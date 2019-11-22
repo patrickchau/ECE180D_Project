@@ -83,9 +83,9 @@ const int usec_delay = 100; //usec
 
 void blink_segment(const int seg, int num_to_display, int usec_delay);
 void init_pins();
-void run_display();
+void* run_display(void* arg);
 int attempt_connection(int* sockfd);
-void server_communication(int sockfd);
+void* server_communication(void* sockfd);
 
 int main(void)
 {
@@ -94,16 +94,26 @@ int main(void)
     init_pins();
 
     int sockfd; 
-    struct sockaddr_in servaddr;
 
     // Attempt communication with server
     while(attempt_connection(&sockfd));
-  
+
+    // Start threads
+    pthread_t network_thread = 0;
+    pthread_t hardware_thread = 1; 
+     
     // Communicate with server
-    server_communication(sockfd);
+    pthread_create(&network_thread, NULL, server_communication, &sockfd);
   
     // Run the display
-    run_display();
+    pthread_create(&hardware_thread, NULL, run_display, NULL); 
+
+    // Wait for threads to finish
+    pthread_join(hardware_thread, NULL);
+    pthread_join(network_thread, NULL);
+
+    // Close threads
+    pthread_exit(NULL); 
 
     // Close the socket 
     close(sockfd); 
@@ -141,7 +151,7 @@ void init_pins(){
     digitalWrite(S3, LOW);
 }
 
-void run_display() {
+void* run_display(void* arg) {
     
     int row_pos_ones = 0;
     int row_pos_tens = 0;
@@ -221,6 +231,8 @@ void run_display() {
             blink_segment(S1, LOWERCASE_C, usec_delay);
         }    
     }
+
+    return NULL;
 }
 
 int attempt_connection(int* sockfd){
@@ -264,16 +276,22 @@ int attempt_connection(int* sockfd){
     return SUCCESSFUL_CONN;
 }
 
-void server_communication(int sockfd) 
+void* server_communication(void* arg) 
 { 
+    // Get sockfd from pthread
+    int sockfd = *(int *)arg;
+
+    // Strings
     char msg[BUFFER_MAX];
     char MAC_ADDR_PATH[BUFFER_MAX];
     char MAC_ADDR[18];
     char interface[6] = "wlan0";
+    char msg_nothing[8] = "nothing";
     
     // Zero out buffers
     bzero(msg, sizeof(msg));
     bzero(MAC_ADDR_PATH, sizeof(BUFFER_MAX));
+    bzero(MAC_ADDR, sizeof(MAC_ADDR));
 
     // Write filepath to file containing MAC ADDR
     sprintf(MAC_ADDR_PATH, "/sys/class/net/%s/address", interface);
@@ -284,7 +302,6 @@ void server_communication(int sockfd)
     if(MACfd != -1) {
         // Read the 17 characters corresponding to MAC ADDR
         read(MACfd, MAC_ADDR, sizeof(char)*17);
-        MAC_ADDR[17] = '\0';
     } else {
         // Use a hopefully unique identifier for MAC ADDR
         sprintf(MAC_ADDR, "83:13:71:76:13:98");
@@ -296,17 +313,24 @@ void server_communication(int sockfd)
 
     // Deliver MAC_ADDR to server
     write(sockfd, msg, sizeof(msg));
+    delay(1000);
     
     while (FOREVER) { 
         bzero(msg, sizeof(msg)); 
         read(sockfd, msg, sizeof(msg));
-        //printf("From Server : %s", msg); 
+        fprintf(stdout, "Server Returned: %s\n", msg);
 
         if ((strncmp(msg, "exit", 4)) == 0) { 
             printf("Client Exit...\n");
             break; 
-        } 
+        }
+
+        // Ping server to let it know we are still connected
+        write(sockfd, msg_nothing, sizeof(msg_nothing));
+        delay(1000);
     } 
+
+    return NULL;
 } 
 
 void blink_segment(const int seg, int num_to_display, int usec_delay) {
