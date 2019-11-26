@@ -1,6 +1,6 @@
 import socket
-import IMU
-import RPi.GPIO as GPIO
+#import IMU
+#import RPi.GPIO as GPIO
 import time
 import datetime
 import math
@@ -50,14 +50,16 @@ def readServer(c): # take in server messages
     buffer = c.recv(_BAUDRATE).decode('utf-8')
   except socket.timeout: 
     print("buffer is empty")
-  
-  print("Received server message: " + received)
+
+  if buffer == "lightUp":
+    print("lighting up!")
+  elif buffer == "nothing":
+    print("stay connected")
   return buffer
 
 def controlLED(c): # run the LED sequence based on server input
-  received = readServer(c)
-  if received == "lightUp": # if buffer isn't empty
-    print("LEDs high")
+  if readServer(c) == "lightUp": # if buffer isn't empty
+    """print("LEDs high")
     GPIO.set(_LED1, GPIO.HIGH)
     GPIO.set(_LED2, GPIO.HIGH)
     GPIO.set(_LED3, GPIO.HIGH)
@@ -67,7 +69,7 @@ def controlLED(c): # run the LED sequence based on server input
     GPIO.set(_LED1, GPIO.LOW)
     GPIO.set(_LED2, GPIO.LOW)
     GPIO.set(_LED3, GPIO.LOW)
-    GPIO.set(_LED4, GPIO.LOW)
+    GPIO.set(_LED4, GPIO.LOW)"""
   return 1
 
 def initIMU():
@@ -125,13 +127,13 @@ def runClient():
   client.connect((host, port))
   time.sleep(5) # allow for time for handshake to complete
   sendMessage("start", client) # send over the MAC address for this pi
-  setGPIO() # set all GPIO pins
-  initIMU() # detect and start IMU
+  #setGPIO() # set all GPIO pins
+  #initIMU() # detect and start IMU
   print(client.recv(_BAUDRATE).decode('utf-8'))
   while True:
-    gestures()
+    #gestures()
     controlLED(client)
-    checkClose()
+    #checkClose()
     # close condition set when person is walking away(leaving server)
     if(closeCondition):
       print("now closing")
