@@ -1,8 +1,8 @@
 #!/usr/local/bin/python3.7
 # each client must have an IP, MAC, row, col associated
 class client:
-    def __init__(self, mac):
-        self.macId=mac
+    def __init__(self):
+        self.macId=None
         self.ipAddr = None
         self.row=None
         self.col=None
@@ -12,11 +12,16 @@ import socket
 from _thread import *
 import threading
 import time
+import errno
 
-macToClient=defaultdict(client)
-macToId=defaultdict(int)
-print_lock=threading.Lock()
-addLock=threading.Lock()
+clientList = []
+macToClient=defaultdict(client) # map for mac->client
+macToId=defaultdict(int)        # mac to client ID
+print_lock=threading.Lock()     # print locks
+addLock=threading.Lock()        # add client locks
+
+
+# linked list variables - maybe move to own object?
 size=0
 id=0
 dummyHead=client()
@@ -24,7 +29,8 @@ dummyHead.next=dummyHead
 dummyHead.prev=dummyHead
 tail=dummyHead
 startPointer=dummyHead
-lightUp=[]
+
+lightUp = []   # list of MACs for clients to light up
 interval=1
 
 def each_client(c):
@@ -34,6 +40,8 @@ def each_client(c):
     global id
     global dummyHead
     global tail
+    global lightUp
+    count = 1
     macId=None
     while True:
         buffer=None
@@ -41,10 +49,11 @@ def each_client(c):
         try:
             buffer=c.recv(4096).decode('utf-8')
             print("received message: " + buffer)
-        except socket.timeout:
+        except socket.timeout:  # timeout error catch
             print_lock.acquire()
             print("time out occured on ",c)
             print_lock.release()
+            # if timeout, then close the connection to client
             if macId:
                 target=macToClient[macId]
                 addLock.acquire()
@@ -52,11 +61,17 @@ def each_client(c):
                 target.next.prev=target.prev
                 del macToClient[macId]
                 size-=1
+                lightUp.remove(macId)
                 addLock.release()
                 data="closed"
                 c.send(data.encode('utf-8'))
                 break
-        
+        except socket.error as e:   # catch if connection is reset (i.e client code is stopped)
+            if e.errno != errno.ECONNRESET:
+                raise
+            lightUp.remove(macId)
+            break
+
         # Block to parse all possible client inputs
         _type,msg=buffer.split(",") #assume client sends in this format
         print("type: " + _type)
@@ -66,21 +81,18 @@ def each_client(c):
                 data="client already exists"
                 c.send(data.encode('utf-8'))
                 continue
+            # print locks
             print_lock.acquire()
             print("add a new client ",c)
             print_lock.release()
-            
+
+            # create new client to macID -> client map
             macId=msg
             newClient=client()
             newClient.macId=msg
 
+            # update the linked list for snake
             addLock.acquire()
-            clientList.append(newClient)
-            macToClient[macId]=newClient
-            size+=1
-            id+=1
-            macToId[macId]=id
-            """
             newClient.prev=tail
             tail.next=newClient
             newClient.next=dummyHead
@@ -90,11 +102,15 @@ def each_client(c):
             size+=1
             id+=1
             macToId[macId]=id
-            """
+            if not macId in lightUp:
+                lightUp.append(macId) # this adds new client to light up
             addLock.release()
+
+            # let client know that it is now registered
             data="registered"
             c.send(data.encode('utf-8'))
         elif _type=="close":
+            # if client sends close request separate from socket timeout
             print("this is a closing message")
             print("mac id: " + macId)
             target=macToClient[macId]
@@ -106,6 +122,7 @@ def each_client(c):
             del macToClient[macId]
             del macToId[macId]
             size-=1
+            lightUp.remove(macId)
             addLock.release()
             data="closed"
             c.send(data.encode('utf-8'))
@@ -115,12 +132,18 @@ def each_client(c):
             r,c = msg.split('.')
             macToClient[macId].row = r
             macToClient[macId].col = c
+        
         # block to send data to client
         if macId in lightUp:
-            data="lightUp"
+            print("client needs to be lit")
+            data="lightUp " + macId + " " + str(count)
+            count = count + 1
+            c.send(data.encode('utf-8'))
+        else:
+            data = "nothing"
             c.send(data.encode('utf-8'))
 
-    #if we break from the while True, close the client connection.
+    # if we break from the while True, close the client connection.
     # this should only happen when we send a close statement
     c.close()
 
@@ -136,7 +159,18 @@ def lookForConnection(serv):
 def loopThrough():
     # set the global variable lightup to be desired client
     # lit up
-    """global lightUp
+    # global lightUp = []
+    
+    # block just to print out current connected clients
+    while True:
+        clients = ""
+        for c in lightUp:
+            clients = clients + c + " "
+        print("Clients: " + clients)
+        time.sleep(5)
+
+    """
+    global lightUp
     global interval
     global startPointer
     global dummyHead
@@ -151,7 +185,8 @@ def loopThrough():
                 lightUp.append(loopPointer.macId)
                 steps-=1
             loopPointer=loopPointer.next
-        addLock.release()"""
+        addLock.release()
+    """
 
 def runServer():
     host="192.168.4.1"

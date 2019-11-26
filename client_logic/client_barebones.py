@@ -1,6 +1,6 @@
 import socket
-import IMU
-import RPi.GPIO as GPIO
+#import IMU
+#import RPi.GPIO as GPIO
 import time
 import datetime
 import math
@@ -48,25 +48,28 @@ def readServer(c): # take in server messages
   c.settimeout(5)  # wait 1 second before throwing an exception
   try:
     buffer = c.recv(_BAUDRATE).decode('utf-8')
-    print("Received server message: " + buffer)
   except socket.timeout: 
     print("buffer is empty")
+
+  if buffer == "lightUp":
+    print("lighting up!")
+  elif buffer == "nothing":
+    print("stay connected")
   return buffer
 
 def controlLED(c): # run the LED sequence based on server input
-  received = readServer(c)
-  if not received is None and "lightUp" in received: # if buffer isn't empty
-    print("LEDs high")
-    GPIO.output(_LED1, GPIO.HIGH)
-    GPIO.output(_LED2, GPIO.HIGH)
-    GPIO.output(_LED3, GPIO.HIGH)
-    GPIO.output(_LED4, GPIO.HIGH)
+  if readServer(c) == "lightUp": # if buffer isn't empty
+    """print("LEDs high")
+    GPIO.set(_LED1, GPIO.HIGH)
+    GPIO.set(_LED2, GPIO.HIGH)
+    GPIO.set(_LED3, GPIO.HIGH)
+    GPIO.set(_LED4, GPIO.HIGH)
     time.sleep(5)
     print("LEDS low")
-    GPIO.output(_LED1, GPIO.LOW)
-    GPIO.output(_LED2, GPIO.LOW)
-    GPIO.output(_LED3, GPIO.LOW)
-    GPIO.output(_LED4, GPIO.LOW)
+    GPIO.set(_LED1, GPIO.LOW)
+    GPIO.set(_LED2, GPIO.LOW)
+    GPIO.set(_LED3, GPIO.LOW)
+    GPIO.set(_LED4, GPIO.LOW)"""
   return 1
 
 def initIMU():
@@ -110,8 +113,6 @@ def sendMessage( type, client ): # send messages to the server
     # send the position of the client to the server
     # data field doesn't matter since row, col taken from token
     message = "position," 
-  elif type == "nothing":
-    message = "nothing, a"
   client.send(message.encode('utf-8'))
   return 1
 
@@ -126,15 +127,13 @@ def runClient():
   client.connect((host, port))
   time.sleep(5) # allow for time for handshake to complete
   sendMessage("start", client) # send over the MAC address for this pi
-  setGPIO() # set all GPIO pins
-  initIMU() # detect and start IMU
+  #setGPIO() # set all GPIO pins
+  #initIMU() # detect and start IMU
   print(client.recv(_BAUDRATE).decode('utf-8'))
   while True:
-    gestures()
+    #gestures()
     controlLED(client)
-    checkClose()
-    sendMessage("nothing", client)
-    time.sleep(2) # for readability
+    #checkClose()
     # close condition set when person is walking away(leaving server)
     if(closeCondition):
       print("now closing")
