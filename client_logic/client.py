@@ -48,10 +48,9 @@ def readServer(c): # take in server messages
   c.settimeout(5)  # wait 1 second before throwing an exception
   try:
     buffer = c.recv(_BAUDRATE).decode('utf-8')
+    print("Received server message: " + buffer)
   except socket.timeout: 
     print("buffer is empty")
-  
-  print("Received server message: " + received)
   return buffer
 
 def controlLED(c): # run the LED sequence based on server input
@@ -111,6 +110,8 @@ def sendMessage( type, client ): # send messages to the server
     # send the position of the client to the server
     # data field doesn't matter since row, col taken from token
     message = "position," 
+  elif type == "nothing":
+    message = "nothing, a"
   client.send(message.encode('utf-8'))
   return 1
 
@@ -132,6 +133,8 @@ def runClient():
     gestures()
     controlLED(client)
     checkClose()
+    sendMessage("nothing", client)
+    time.sleep(2) # for readability
     # close condition set when person is walking away(leaving server)
     if(closeCondition):
       print("now closing")

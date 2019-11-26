@@ -12,6 +12,7 @@ import socket
 from _thread import *
 import threading
 import time
+import errno
 
 clientList = []
 macToClient=defaultdict(client) # map for mac->client
@@ -29,7 +30,7 @@ dummyHead.prev=dummyHead
 tail=dummyHead
 startPointer=dummyHead
 
-global lightUp=[]   # list of MACs for clients to light up
+lightUp = []   # list of MACs for clients to light up
 interval=1
 
 def each_client(c):
@@ -39,6 +40,8 @@ def each_client(c):
     global id
     global dummyHead
     global tail
+    global lightUp
+    count = 1
     macId=None
     while True:
         buffer=None
@@ -46,7 +49,7 @@ def each_client(c):
         try:
             buffer=c.recv(4096).decode('utf-8')
             print("received message: " + buffer)
-        except socket.timeout:
+        except socket.timeout:  # timeout error catch
             print_lock.acquire()
             print("time out occured on ",c)
             print_lock.release()
@@ -63,7 +66,12 @@ def each_client(c):
                 data="closed"
                 c.send(data.encode('utf-8'))
                 break
-        
+        except socket.error as e:   # catch if connection is reset (i.e client code is stopped)
+            if e.errno != errno.ECONNRESET:
+                raise
+            lightUp.remove(macId)
+            break
+
         # Block to parse all possible client inputs
         _type,msg=buffer.split(",") #assume client sends in this format
         print("type: " + _type)
@@ -94,7 +102,8 @@ def each_client(c):
             size+=1
             id+=1
             macToId[macId]=id
-            lightUp.append(macId) # this adds new client to light up
+            if not macId in lightUp:
+                lightUp.append(macId) # this adds new client to light up
             addLock.release()
 
             # let client know that it is now registered
@@ -123,9 +132,12 @@ def each_client(c):
             r,c = msg.split('.')
             macToClient[macId].row = r
             macToClient[macId].col = c
+        
         # block to send data to client
         if macId in lightUp:
-            data="lightUp " + macId
+            print("client needs to be lit")
+            data="lightUp " + macId + " " + str(count)
+            count = count + 1
             c.send(data.encode('utf-8'))
         else:
             data = "nothing"
@@ -148,9 +160,14 @@ def loopThrough():
     # set the global variable lightup to be desired client
     # lit up
     # global lightUp = []
+    
+    # block just to print out current connected clients
     while True:
-        print("Clients: " lightUp)
-        sleep(5)
+        clients = ""
+        for c in lightUp:
+            clients = clients + c + " "
+        print("Clients: " + clients)
+        time.sleep(5)
 
     """
     global lightUp
