@@ -55,18 +55,18 @@ def readServer(c): # take in server messages
 
 def controlLED(c): # run the LED sequence based on server input
   received = readServer(c)
-  if received == "lightUp": # if buffer isn't empty
+  if not received is None and "lightUp" in received: # if buffer isn't empty
     print("LEDs high")
-    GPIO.set(_LED1, GPIO.HIGH)
-    GPIO.set(_LED2, GPIO.HIGH)
-    GPIO.set(_LED3, GPIO.HIGH)
-    GPIO.set(_LED4, GPIO.HIGH)
+    GPIO.output(_LED1, GPIO.HIGH)
+    GPIO.output(_LED2, GPIO.HIGH)
+    GPIO.output(_LED3, GPIO.HIGH)
+    GPIO.output(_LED4, GPIO.HIGH)
     time.sleep(5)
     print("LEDS low")
-    GPIO.set(_LED1, GPIO.LOW)
-    GPIO.set(_LED2, GPIO.LOW)
-    GPIO.set(_LED3, GPIO.LOW)
-    GPIO.set(_LED4, GPIO.LOW)
+    GPIO.output(_LED1, GPIO.LOW)
+    GPIO.output(_LED2, GPIO.LOW)
+    GPIO.output(_LED3, GPIO.LOW)
+    GPIO.output(_LED4, GPIO.LOW)
   return 1
 
 def initIMU():
