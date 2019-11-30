@@ -55,7 +55,7 @@
 #define SA struct sockaddr 
 #define BAUDRATE 4096
 
-// Seven Seg Params
+// GPIO Pins
 const int A = 0;
 const int B = 1;
 const int C = 2;
