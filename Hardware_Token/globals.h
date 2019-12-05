@@ -1,11 +1,11 @@
 /*************************************************************************/
-/*                          hardware_token.c                             */
+/*                             globals.h                                 */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                          Hardware Token                               */
 /*           https://github.com/patrickchau/ECE180D_Project              */
 /*************************************************************************/
-/*                 Copyright  12-5-2019 Joseph Miller.                   */
+/*                Copyright  10-31-2019 Joseph Miller.                   */
 /*                                                                       */
 /* Permission is hereby granted, free of charge, to any person obtaining */
 /* a copy of this software and associated documentation files (the       */
@@ -27,66 +27,37 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#include "globals.h"
-#include "network.h"
-#include "hardware.h"
-
-// STD libraries
-#include <stdio.h> 
-#include <stdlib.h> 
-#include <unistd.h>
-#include <netdb.h> 
-#include <string.h>
+#ifndef GLOBALS_DEFINED
+#define GLOBALS_DEFINED
 
 // Multithreading
 #include <pthread.h> 
 
-//Sockets
-#include <sys/socket.h>
-#include <arpa/inet.h>
+/*****************************************************
+ * Global Constants
+*****************************************************/
 
-// Allows for error codes
-#include <errno.h>
+// Magic Numbers
+#define FOREVER 1
+#define usec_delay 1 
+#define ten_usec_delay 10
+#define hun_usec_delay 100
+#define msec_delay 1
+#define ten_msec_delay 10
+#define hun_msec_delay 100
+#define sec_delay 1000
 
-// For Open
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
+/*****************************************************
+ * Modifiable Globals
+*****************************************************/
 
-// Lock Declaration
-pthread_mutex_t lock;
+// Threads
+extern pthread_mutex_t lock;
 
+// Rows and Cols
+extern int row_pos_ones;
+extern int row_pos_tens;
+extern int col_pos_ones;
+extern int col_pos_tens;   
 
-int main(void) {
-    
-    init_pins();
-    int sockfd; 
-
-    // Attempt communication with server
-    while(attempt_connection(&sockfd));
-
-    // Init threads
-    pthread_t network_thread = 0;
-    pthread_t hardware_thread = 1; 
-
-    // Init mutex
-    pthread_mutex_init(&lock, NULL);
-     
-    // Communicate with server
-    pthread_create(&network_thread, NULL, server_communication, &sockfd);
-  
-    // Run the display
-    pthread_create(&hardware_thread, NULL, run_display, NULL); 
-
-    // Wait for threads to finish
-    pthread_join(hardware_thread, NULL);
-    pthread_join(network_thread, NULL);
-
-    // Close threads
-    pthread_exit(NULL); 
-
-    // Close the socket 
-    close(sockfd); 
-
-    return 0;
-}
+#endif //GLOBALS_DEFINED

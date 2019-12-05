@@ -32,7 +32,7 @@ it isn't the only design that works.
 Note: The above circuit schematic is under the assumption you are not modifying the 
 GPIO pins in the files included. If you wish to change the pin ordering while wiring
 up the circuit simply place the corresponding wiringPI GPIO pin number in the GPIO
-pins located in 7_seg.c. For a diagram mapping GPIO pins to WiringPI GPIO click 
+pins located in hardware.h. For a diagram mapping GPIO pins to WiringPI GPIO click 
 [here](https://pinout.xyz/#).
 
 # NOTICE:

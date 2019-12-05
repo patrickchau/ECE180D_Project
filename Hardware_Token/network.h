@@ -1,11 +1,11 @@
 /*************************************************************************/
-/*                          hardware_token.c                             */
+/*                             network.h                                 */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                          Hardware Token                               */
 /*           https://github.com/patrickchau/ECE180D_Project              */
 /*************************************************************************/
-/*                 Copyright  12-5-2019 Joseph Miller.                   */
+/*                Copyright  11-14-2019 Joseph Miller.                   */
 /*                                                                       */
 /* Permission is hereby granted, free of charge, to any person obtaining */
 /* a copy of this software and associated documentation files (the       */
@@ -27,66 +27,49 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#include "globals.h"
-#include "network.h"
-#include "hardware.h"
+#ifndef NETWORK_DEFINED
+#define NETWORK_DEFINED
 
-// STD libraries
-#include <stdio.h> 
-#include <stdlib.h> 
-#include <unistd.h>
-#include <netdb.h> 
-#include <string.h>
+/*****************************************************
+ * Global Constants
+*****************************************************/
+// Return Codes
+#define SUCCESSFUL_CONN 0
+#define FAILED_CONN 1
 
-// Multithreading
-#include <pthread.h> 
+// Socket Params
+#define BUFFER_MAX 128 
+#define PORT 8080 
+#define SA struct sockaddr
 
-//Sockets
-#include <sys/socket.h>
-#include <arpa/inet.h>
+/******************************************************
+ * Function: attempt_connection
+ *-----------------------------------------------------
+ * Attempts to generate a socket fd to the server
+ *-----------------------------------------------------
+ * Return Values:
+ * SUCCESSFUL_CONN is returned when connection succeeds
+ * FAILED_CONN is returned when connection fails
+ * ----------------------------------------------------
+ * Inputs:
+ * sockfd will be set to the correct value for the
+ * network file descriptor on success. On fail will be
+ * set to NULL.
+******************************************************/
+int attempt_connection(int* sockfd);
 
-// Allows for error codes
-#include <errno.h>
+/******************************************************
+ * Function: server_communication
+ *-----------------------------------------------------
+ * Continuously runs as long as server is connected to
+ *-----------------------------------------------------
+ * Return Values:
+ * None
+ * ----------------------------------------------------
+ * Inputs:
+ * Casts void* provided from pthread to int*. Should be
+ * a valid file descriptor for the network.
+******************************************************/
+void* server_communication(void* sockfd);
 
-// For Open
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-
-// Lock Declaration
-pthread_mutex_t lock;
-
-
-int main(void) {
-    
-    init_pins();
-    int sockfd; 
-
-    // Attempt communication with server
-    while(attempt_connection(&sockfd));
-
-    // Init threads
-    pthread_t network_thread = 0;
-    pthread_t hardware_thread = 1; 
-
-    // Init mutex
-    pthread_mutex_init(&lock, NULL);
-     
-    // Communicate with server
-    pthread_create(&network_thread, NULL, server_communication, &sockfd);
-  
-    // Run the display
-    pthread_create(&hardware_thread, NULL, run_display, NULL); 
-
-    // Wait for threads to finish
-    pthread_join(hardware_thread, NULL);
-    pthread_join(network_thread, NULL);
-
-    // Close threads
-    pthread_exit(NULL); 
-
-    // Close the socket 
-    close(sockfd); 
-
-    return 0;
-}
+#endif //NETWORK_DEFINED

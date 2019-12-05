@@ -1,13 +1,14 @@
 # Author:   Joseph Miller
 
+CC = gcc
 CFLAGS = -Wall -Wextra
 LDLIBS = -pthread -lwiringPi
 OPS = -g -o
+OBJFILES = hardware_token.o hardware.o network.o
+TARGET = hardware_token
 
-default: 7_seg
-
-7_seg: 7_seg.c
-	gcc $(CFLAGS) $(OPS) 7_seg 7_seg.c $(LDLIBS)
+all: $(OBJFILES)
+	$(CC) $(CFLAGS) $(OPS) $(TARGET) $(OBJFILES) $(LDLIBS)
 
 clean:
-	rm -f 7_seg
+	rm -f $(TARGET) $(OBJFILES)
