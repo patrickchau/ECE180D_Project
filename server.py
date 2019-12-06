@@ -109,6 +109,7 @@ def each_client(c):
             addLock.release()
             data="hw_ack"
             c.send(data)
+            
         if macId in lightUp:
             data="lightUp"
             c.send(data)

@@ -61,10 +61,11 @@ def each_client(c):
                 target.next.prev=target.prev
                 del macToClient[macId]
                 size-=1
+
                 lightUp.remove(macId)
                 addLock.release()
                 data="closed"
-                c.send(data.encode('utf-8'))
+                c.send(data.encode('utf-8')) # encode data to correct type
                 break
         except socket.error as e:   # catch if connection is reset (i.e client code is stopped)
             if e.errno != errno.ECONNRESET:
@@ -73,7 +74,7 @@ def each_client(c):
             break
 
         # Block to parse all possible client inputs
-        _type,msg=buffer.split(",") #assume client sends in this format
+        _type,msg=buffer.split(",") # assume client sends in this format
         print("type: " + _type)
         if _type=="start":
             print("this is a start message!")
@@ -115,10 +116,13 @@ def each_client(c):
             print("mac id: " + macId)
             target=macToClient[macId]
             addLock.acquire()
+
+            # change this to a (try, except) block for when target is Null
             if not target.next:
                 target.prev.next=target.next
             if not target.prev:
                 target.next.prev=target.prev
+
             del macToClient[macId]
             del macToId[macId]
             size-=1
@@ -132,7 +136,17 @@ def each_client(c):
             r,c = msg.split('.')
             macToClient[macId].row = r
             macToClient[macId].col = c
-        
+        elif type=="hw":        # hardware token specific statement
+            row,col=msg.split(".")
+            lastPerson.col=col
+            lastPerson.row=row
+            key=lastPerson.macId
+            addLock.acquire()
+            macToClient[key]=lastPerson
+            addLock.release()
+            data="hw_ack"
+            c.send(data)
+
         # block to send data to client
         if macId in lightUp:
             print("client needs to be lit")
@@ -174,19 +188,48 @@ def loopThrough():
     global interval
     global startPointer
     global dummyHead
-    while size>1:
-        time.delay(5) #lets move the snake every 5 secs
-        lightUp=[]
-        steps=interval
-        loopPointer=startPointer
-        addLock.acquire()
-        while steps>0:
-            if loopPointer!=dummyHead:
-                lightUp.append(loopPointer.macId)
-                steps-=1
-            loopPointer=loopPointer.next
-        addLock.release()
-    """
+    global mode
+    time.sleep(5) 
+    lightUp=[]
+    if mode==0:
+        while size>1:            
+            steps=interval
+            loopPointer=startPointer
+            addLock.acquire()
+            while steps>0:
+                if loopPointer!=dummyHead:
+                    lightUp.append(loopPointer.macId)
+                    #you can print stuff like row, and col here, eg.
+                    print(str(loopPointer.row)+" "+str(loopPointer.col)) 
+                    steps-=1
+                loopPointer=loopPointer.next
+            startPointer+=1
+            addLock.release()
+    else:
+        clientList=[macToClient[key] for key in macToClient]
+        rowList=sorted(clientList,key=lambda x:x.row)
+        colList=sorted(clientList,key=lambda x:x.col)
+        leftBound=colList[0].col
+        rightBound=colList[size-1].col
+        upBound=rowList[size-1].row
+        lowBound=rowList[0].row
+    if mode==1 and size>5:
+        r1,r2,r3,r4,r5=[],[],[],[],[]
+        for client in clientList:
+            r,c=client.row,client.col
+            if ( c<=leftBound+(rightBound-leftBound)/3 and r>lowBound+(upBound-lowBound)/3 ):
+                r1.append(client)
+            if ( c<=leftBound+(rightBound-leftBound)/3 and r<=lowBound+(upBound-lowBound)/3 ):
+                r2.append(client)
+            if ( ( c>leftBound+(rightBound-leftBound)/3 and c<=leftBound+2*(rightBound-leftBound)/3 ) and ( r<=lowBound+(upBound-lowBound)/3 ) ):
+                r3.append(client)
+            if ( c> leftBound + 2*(rightBound-leftBound)/3 and r<=lowBound+(upBound-lowBound)/3 ):
+                r4.append(client)
+            if ( c>=leftBound + 2*(rightBound-leftBound)/3 and r>lowBound+(upBound-lowBound)/3 ):
+                r5.append(client)
+        if r1 and r2 and r3 and r4 and r5:
+            LightUp=r1+r2+r3+r4+r5
+        """
 
 def runServer():
     host="192.168.4.1"
