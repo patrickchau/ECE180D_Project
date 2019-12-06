@@ -43,6 +43,6 @@ void sigterm_handler(int signo);
 
 void sigpipe_handler(int signo);
 
-void set_sig_handler();
+void set_sig_handlers();
 
 #endif //SIGNAL_HANDLER_DEFINED

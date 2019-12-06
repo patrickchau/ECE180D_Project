@@ -76,7 +76,7 @@ void sigpipe_handler(int signo)  {
     fprintf(stdout, "SIGPIPE OCCURED! Reattempting server communication.\n");
 }
 
-void set_sig_handler() {
+void set_sig_handlers() {
 
         if (signal(SIGINT, sigterm_handler) == SIG_ERR) { 
             fprintf(stderr, "sigaction failed with error: %s\n", strerror(errno));

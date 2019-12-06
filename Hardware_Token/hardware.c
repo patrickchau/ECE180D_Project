@@ -145,8 +145,8 @@ void* run_display(void* arg) {
                 blink_segment(S1, character_to_display('c'), hun_usec_delay);
             }    
         } else {
-            // Display not connected.
-            clear_pins();
+            // Display connecting
+            display_connecting();
         }
     }
 
@@ -280,11 +280,55 @@ unsigned char character_to_display(char char_to_display) {
         case 't':
                 return 0x78;
                 break;
+        case 'i':
+                return 0x04;
+                break;
         case 'g':
                 return 0x6F;
                 break;
         default:
                 return 0x00;
                 break;
+    }
+}
+
+void display_connecting() {
+
+    const char msg[11] = "connecting";
+    int init_time = millis();
+    int i = -2;
+    while(!server_connected) {
+        int curr_time = millis();
+
+        // If 400 msec have passed scroll over 1.
+        if(curr_time - init_time > 400) {
+            i += 1;
+            if(i == 10) {
+                i = -2;
+            }
+            init_time = curr_time;
+        }
+     
+        // Allow it to scroll starting from the right.
+        if(i < 10 && i >= 0) {
+            blink_segment(S1, character_to_display(msg[i]), hun_usec_delay);
+        }
+        else {
+            blink_segment(S1, character_to_display(msg['!']), hun_usec_delay);
+        }
+
+        if(i + 1 < 10 && i + 1 >= 0) {
+            blink_segment(S2, character_to_display(msg[i+1]), hun_usec_delay);
+        }
+        else {
+            blink_segment(S2, character_to_display(msg['!']), hun_usec_delay);
+        }
+        
+        if(i + 2 < 10 && i + 2 >= 0) {
+            blink_segment(S3, character_to_display(msg[i+2]), hun_usec_delay);
+        }
+        else {
+            blink_segment(S3, character_to_display(msg['!']), hun_usec_delay);
+        }
     }
 }

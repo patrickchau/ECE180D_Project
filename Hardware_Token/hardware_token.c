@@ -60,26 +60,27 @@ pthread_mutex_t lock;
 
 int main(void) {
     
+    // Init GPIO pin mappings and set signal handlers.
     init_pins();
-    set_sig_handler();
-    int sockfd; 
-
-    // Attempt communication with server
-    while(attempt_connection(&sockfd));
-
+    set_sig_handlers();
+    
     // Init threads
     pthread_t network_thread = 0;
     pthread_t hardware_thread = 1; 
 
     // Init mutex
     pthread_mutex_init(&lock, NULL);
+
+    // Run the display
+    pthread_create(&hardware_thread, NULL, run_display, NULL);
+
+    // Attempt communication with server
+    int sockfd; 
+    while(attempt_connection(&sockfd));
      
     // Communicate with server
     pthread_create(&network_thread, NULL, server_communication, &sockfd);
   
-    // Run the display
-    pthread_create(&hardware_thread, NULL, run_display, NULL); 
-
     // Wait for threads to finish
     pthread_join(hardware_thread, NULL);
     pthread_join(network_thread, NULL);

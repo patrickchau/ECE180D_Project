@@ -71,7 +71,7 @@ int attempt_connection(int* sockfd){
         fprintf(stderr, "Error Creating Socket: %s\n", strerror(errno));
 
         // Wait one second before reattempting
-        delay(1000);
+        delay(sec_delay);
         return FAILED_CONN; 
     }
 
@@ -89,7 +89,7 @@ int attempt_connection(int* sockfd){
         close(attempted_sockfd);  
 
         // Wait one second before reattempting
-        delay(1000);
+        delay(sec_delay);
         return FAILED_CONN;
     } 
     else{
@@ -142,7 +142,7 @@ void* server_communication(void* arg)
     while (FOREVER) { 
         if(server_connected == 1){
             // Give server a chance to read and send messages
-            delay(1000);
+            delay(sec_delay);
 
             // Read data from server
             bzero(msg, sizeof(msg));

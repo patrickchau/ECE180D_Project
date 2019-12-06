@@ -142,4 +142,17 @@ unsigned char integer_to_display(int num_to_display);
 ******************************************************/
 unsigned char character_to_display(char char_to_display);
 
+/******************************************************
+ * Function: display_connecting
+ *-----------------------------------------------------
+ * Scrolls connecting across the 7_segments
+ *-----------------------------------------------------
+ * Return Value:
+ * None.
+ * ----------------------------------------------------
+ * Inputs:
+ * None.
+******************************************************/
+void display_connecting();
+
 #endif //HARDWARE_DEFINED
