@@ -29,6 +29,7 @@
 
 #include "globals.h"
 #include "network.h"
+#include "signal_handler.h"
 
 // STD libraries
 #include <stdio.h> 
@@ -52,7 +53,13 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+
+int server_connected = 0;
+
 int attempt_connection(int* sockfd){
+
+    // Mask SIGTERM on this thread.
+    mask_sigterm();
     
     struct sockaddr_in servaddr;
 
@@ -88,6 +95,7 @@ int attempt_connection(int* sockfd){
     else{
         // Set sockfd to succesfully connected socket
         *sockfd = attempted_sockfd;
+        server_connected = 1;
     }
     
     return SUCCESSFUL_CONN;
@@ -132,32 +140,39 @@ void* server_communication(void* arg)
     write(sockfd, msg, sizeof(msg));
     
     while (FOREVER) { 
-        
-        // Give server a chance to read and send messages
-        delay(1000);
+        if(server_connected == 1){
+            // Give server a chance to read and send messages
+            delay(1000);
 
-        // Read data from server
-        bzero(msg, sizeof(msg));
-        read(sockfd, msg, sizeof(msg));
-        fprintf(stdout, "Server Returned: %s\n", msg);
-
-        if((strncmp(msg, "position", 8)) != 0) { 
-            // Calculate row and col for token
-            pthread_mutex_lock(&lock);
-            int row = row_pos_tens*10 + row_pos_ones;
-            int col = col_pos_tens*10 + col_pos_ones;
-            pthread_mutex_unlock(&lock);
-
-            // Format string for delivery
+            // Read data from server
             bzero(msg, sizeof(msg));
-            sprintf(msg, "Token sent: position,%d.%d", row, col);
+            read(sockfd, msg, sizeof(msg));
+            fprintf(stdout, "Server Returned: %s\n", msg);
+
+            if((strncmp(msg, "position", 8)) != 0) { 
+                // Calculate row and col for token
+                pthread_mutex_lock(&lock);
+                int row = row_pos_tens*10 + row_pos_ones;
+                int col = col_pos_tens*10 + col_pos_ones;
+                pthread_mutex_unlock(&lock);
+
+                // Format string for delivery
+                bzero(msg, sizeof(msg));
+                sprintf(msg, "Token sent: position,%d.%d", row, col);
+                write(sockfd, msg, sizeof(msg));
+                fprintf(stdout, "%s\n", msg);
+            }
+            else {
+                // Ping server to let it know we are still connected
+                write(sockfd, msg_nothing, sizeof(msg_nothing));
+                fprintf(stdout, "Nothing to send, pinging server\n");
+            }
+        } else{
+            // Reconnect to server.
+            while(attempt_connection(&sockfd));
+            bzero(msg, sizeof(msg));
+            sprintf(msg, "start,%s", MAC_ADDR);
             write(sockfd, msg, sizeof(msg));
-            fprintf(stdout, "%s\n", msg);
-        }
-        else {
-            // Ping server to let it know we are still connected
-            write(sockfd, msg_nothing, sizeof(msg_nothing));
-            fprintf(stdout, "Nothing to send, pinging server\n");
         }
     }
 

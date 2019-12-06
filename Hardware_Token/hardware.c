@@ -29,6 +29,7 @@
 
 #include "hardware.h"
 #include "globals.h"
+#include "signal_handler.h"
 
 // Provides GPIO Pin Mappings
 #include <wiringPi.h>
@@ -52,6 +53,9 @@ void* run_display(void* arg) {
 
     // Remove compiler warning
     (void)arg;
+
+    // Mask sigpipe on this thread.
+    mask_sigpipe();
     
     int switch_on = 0;
     int button1_off = 1;
@@ -60,95 +64,116 @@ void* run_display(void* arg) {
     int button2_off = 1;
 
     while (FOREVER) {
-        switch_on = digitalRead(SW);
-        button1_off = digitalRead(BN1);
-        button2_off = digitalRead(BN2);
+        if(server_connected == 1) {
+            // Run Normal Hardware code.
+            switch_on = digitalRead(SW);
+            button1_off = digitalRead(BN1);
+            button2_off = digitalRead(BN2);
 
-        if(switch_on) {
-            if(!button1_off && !button1_held) {
-                pthread_mutex_lock(&lock);
-                row_pos_ones = row_pos_ones + 1;
-                if(row_pos_ones > 9) {
-                    row_pos_tens = row_pos_tens + 1;
-                    row_pos_ones = 0;
-                    if(row_pos_tens > 9) {
-                        row_pos_tens = 0;
-                    } 
-                }
-                pthread_mutex_unlock(&lock);
-                button1_held = 1;
-            } else if(button1_off) {
-                button1_held = 0;
-              }
-                if(!button2_off && !button2_held) {
+            if(switch_on) {
+                if(!button1_off && !button1_held) {
                     pthread_mutex_lock(&lock);
-                    row_pos_ones = row_pos_ones - 1;
-                    if(row_pos_ones < 0){
-                        row_pos_tens = row_pos_tens - 1;
-                        row_pos_ones = 9;
-                        if(row_pos_tens < 0){
-                            row_pos_tens = 9;
-                        }
+                    row_pos_ones = row_pos_ones + 1;
+                    if(row_pos_ones > 9) {
+                        row_pos_tens = row_pos_tens + 1;
+                        row_pos_ones = 0;
+                        if(row_pos_tens > 9) {
+                            row_pos_tens = 0;
+                        } 
                     }
                     pthread_mutex_unlock(&lock);
-                    button2_held = 1;
-                } else if(button2_off){
-                    button2_held = 0;
-            }
-
-            // Other thread only reads from globals so no need for lock
-            blink_segment(S2, integer_to_display(row_pos_tens) , hun_usec_delay);
-            blink_segment(S3, integer_to_display(row_pos_ones) , hun_usec_delay);
-            blink_segment(S1, character_to_display('r'), hun_usec_delay);
-        }
-        else{
-            if(!button1_off && !button1_held){
-                pthread_mutex_lock(&lock);
-                col_pos_ones = col_pos_ones + 1;
-                if(col_pos_ones > 9) {
-                    col_pos_tens = col_pos_tens + 1;
-                    col_pos_ones = 0;
-                    if(col_pos_tens > 9) {
-                        col_pos_tens = 0;
-                    } 
-                }
-                pthread_mutex_unlock(&lock);
-                button1_held = 1;
-                } else if(button1_off){
+                    button1_held = 1;
+                } else if(button1_off) {
                     button1_held = 0;
                 }
-                if(!button2_off && !button2_held){
-                    pthread_mutex_lock(&lock);
-                    col_pos_ones = col_pos_ones - 1;
-                    if(col_pos_ones < 0){
-                        col_pos_tens = col_pos_tens - 1;
-                        col_pos_ones = 9;
-                        if(col_pos_tens < 0){
-                            col_pos_tens = 9;
+                    if(!button2_off && !button2_held) {
+                        pthread_mutex_lock(&lock);
+                        row_pos_ones = row_pos_ones - 1;
+                        if(row_pos_ones < 0){
+                            row_pos_tens = row_pos_tens - 1;
+                            row_pos_ones = 9;
+                            if(row_pos_tens < 0){
+                                row_pos_tens = 9;
+                            }
                         }
+                        pthread_mutex_unlock(&lock);
+                        button2_held = 1;
+                    } else if(button2_off){
+                        button2_held = 0;
+                }
+
+                // Other thread only reads from globals so no need for lock
+                blink_segment(S2, integer_to_display(row_pos_tens) , hun_usec_delay);
+                blink_segment(S3, integer_to_display(row_pos_ones) , hun_usec_delay);
+                blink_segment(S1, character_to_display('r'), hun_usec_delay);
+            }
+            else{
+                if(!button1_off && !button1_held){
+                    pthread_mutex_lock(&lock);
+                    col_pos_ones = col_pos_ones + 1;
+                    if(col_pos_ones > 9) {
+                        col_pos_tens = col_pos_tens + 1;
+                        col_pos_ones = 0;
+                        if(col_pos_tens > 9) {
+                            col_pos_tens = 0;
+                        } 
                     }
                     pthread_mutex_unlock(&lock);
-                button2_held = 1;
-                } else if(button2_off){
-                    button2_held = 0;
-            }
+                    button1_held = 1;
+                    } else if(button1_off){
+                        button1_held = 0;
+                    }
+                    if(!button2_off && !button2_held){
+                        pthread_mutex_lock(&lock);
+                        col_pos_ones = col_pos_ones - 1;
+                        if(col_pos_ones < 0){
+                            col_pos_tens = col_pos_tens - 1;
+                            col_pos_ones = 9;
+                            if(col_pos_tens < 0){
+                                col_pos_tens = 9;
+                            }
+                        }
+                        pthread_mutex_unlock(&lock);
+                    button2_held = 1;
+                    } else if(button2_off){
+                        button2_held = 0;
+                }
 
-            // Other thread only reads from globals so no need for lock
-            blink_segment(S2, integer_to_display(col_pos_tens), hun_usec_delay);
-            blink_segment(S3, integer_to_display(col_pos_ones), hun_usec_delay);
-            blink_segment(S1, character_to_display('c'), hun_usec_delay);
-        }    
+                // Other thread only reads from globals so no need for lock
+                blink_segment(S2, integer_to_display(col_pos_tens), hun_usec_delay);
+                blink_segment(S3, integer_to_display(col_pos_ones), hun_usec_delay);
+                blink_segment(S1, character_to_display('c'), hun_usec_delay);
+            }    
+        } else {
+            // Display not connected.
+            clear_pins();
+        }
     }
 
     return NULL;
 }
 
-void init_pins(){
+void clear_pins() {
+    
+    // Set outputs low before beginning
+    digitalWrite(A, LOW);
+    digitalWrite(B, LOW);
+    digitalWrite(C, LOW);
+    digitalWrite(D, LOW);
+    digitalWrite(E, LOW);
+    digitalWrite(F, LOW);
+    digitalWrite(G, LOW);
+    digitalWrite(S1, LOW);
+    digitalWrite(S2, LOW);
+    digitalWrite(S3, LOW);
+}
+
+void init_pins() {
 
     // Use default wiringPiSetup
     wiringPiSetup();
 
-    //Set I/O status for pins
+    // Set I/O status for pins
     pinMode(A, OUTPUT);
     pinMode(B, OUTPUT);
     pinMode(C, OUTPUT);
@@ -163,17 +188,8 @@ void init_pins(){
     pinMode(BN1, INPUT);
     pinMode(BN2, INPUT);
 
-    //Set outputs low before beginning
-    digitalWrite(A, LOW);
-    digitalWrite(B, LOW);
-    digitalWrite(C, LOW);
-    digitalWrite(D, LOW);
-    digitalWrite(E, LOW);
-    digitalWrite(F, LOW);
-    digitalWrite(G, LOW);
-    digitalWrite(S1, LOW);
-    digitalWrite(S2, LOW);
-    digitalWrite(S3, LOW);
+    // Set outputs low before beginning
+    clear_pins();
 }
 
 void blink_segment(const int seg, const unsigned char display_char, int time_delay) {
@@ -272,4 +288,3 @@ unsigned char character_to_display(char char_to_display) {
                 break;
     }
 }
-

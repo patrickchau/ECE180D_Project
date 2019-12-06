@@ -1,11 +1,11 @@
 /*************************************************************************/
-/*                             globals.h                                 */
+/*                          signal_handler.c                             */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                          Hardware Token                               */
 /*           https://github.com/patrickchau/ECE180D_Project              */
 /*************************************************************************/
-/*                Copyright  10-31-2019 Joseph Miller.                   */
+/*                 Copyright  12-5-2019 Joseph Miller.                   */
 /*                                                                       */
 /* Permission is hereby granted, free of charge, to any person obtaining */
 /* a copy of this software and associated documentation files (the       */
@@ -27,40 +27,62 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#ifndef GLOBALS_DEFINED
-#define GLOBALS_DEFINED
+#include "hardware.h"
+#include "signal_handler.h"
+#include "globals.h"
 
-// Multithreading
-#include <pthread.h> 
+#include<pthread.h>
 
-/*****************************************************
- * Global Constants
-*****************************************************/
+// STD libraries
+#include <stdio.h> 
+#include <stdlib.h> 
+#include <unistd.h>
+#include <netdb.h> 
+#include <string.h>
+#include <errno.h>
 
-// Magic Numbers
-#define FOREVER 1
-#define usec_delay 1 
-#define ten_usec_delay 10
-#define hun_usec_delay 100
-#define msec_delay 1
-#define ten_msec_delay 10
-#define hun_msec_delay 100
-#define sec_delay 1000
+void mask_sigpipe() {
+	sigset_t mask;
+	sigemptyset(&mask); 
+    sigaddset(&mask, SIGPIPE);
+                
+    pthread_sigmask(SIG_BLOCK, &mask, NULL);
+}
 
-/*****************************************************
- * Modifiable Globals
-*****************************************************/
+void mask_sigterm() {
+	sigset_t mask;
+	sigemptyset(&mask); 
+    sigaddset(&mask, SIGTERM); 
+                
+    pthread_sigmask(SIG_BLOCK, &mask, NULL);
+}
 
-// Threads
-extern pthread_mutex_t lock;
+void sigterm_handler(int signo)  {
+  
+    // Remove compiler warnings on unused variables.
+    (void)signo;
 
-// Rows and Cols
-extern int row_pos_ones;
-extern int row_pos_tens;
-extern int col_pos_ones;
-extern int col_pos_tens;
+    fprintf(stdout, "SIGINT Occured! Closing Program.\n");
+    clear_pins();
+    _Exit(0);
 
-// Server
-extern int server_connected;
+}
 
-#endif //GLOBALS_DEFINED
+void sigpipe_handler(int signo)  {
+    // Remove compiler warnings on unused variables.
+    (void)signo;
+    //Set server as disconnected
+    server_connected = 0;
+    fprintf(stdout, "SIGPIPE OCCURED! Reattempting server communication.\n");
+}
+
+void set_sig_handler() {
+
+        if (signal(SIGINT, sigterm_handler) == SIG_ERR) { 
+            fprintf(stderr, "sigaction failed with error: %s\n", strerror(errno));
+        }
+
+        if (signal(SIGPIPE, sigpipe_handler) == SIG_ERR) { 
+            fprintf(stderr, "sigaction failed with error: %s\n", strerror(errno));
+        }
+}

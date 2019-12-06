@@ -41,4 +41,3 @@ This is currently under development. The following have yet to be implemented:
 * Extensive error handling
 * Server reconnection after disconnection
 * Bugtesting
-* Interrupt Handler

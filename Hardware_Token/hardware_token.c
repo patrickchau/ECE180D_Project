@@ -30,6 +30,7 @@
 #include "globals.h"
 #include "network.h"
 #include "hardware.h"
+#include "signal_handler.h"
 
 // STD libraries
 #include <stdio.h> 
@@ -60,6 +61,7 @@ pthread_mutex_t lock;
 int main(void) {
     
     init_pins();
+    set_sig_handler();
     int sockfd; 
 
     // Attempt communication with server

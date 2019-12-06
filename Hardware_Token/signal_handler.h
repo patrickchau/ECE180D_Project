@@ -1,11 +1,11 @@
 /*************************************************************************/
-/*                             globals.h                                 */
+/*                          signal_handler.h                             */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                          Hardware Token                               */
 /*           https://github.com/patrickchau/ECE180D_Project              */
 /*************************************************************************/
-/*                Copyright  10-31-2019 Joseph Miller.                   */
+/*                 Copyright  12-5-2019 Joseph Miller.                   */
 /*                                                                       */
 /* Permission is hereby granted, free of charge, to any person obtaining */
 /* a copy of this software and associated documentation files (the       */
@@ -27,40 +27,22 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#ifndef GLOBALS_DEFINED
-#define GLOBALS_DEFINED
+#ifndef SIGNAL_HANDLER_DEFINED
+#define SIGNAL_HANDLER_DEFINED
 
-// Multithreading
-#include <pthread.h> 
+// Signal headers
+#include <signal.h>
+#include <sys/types.h>
+#include <sys/wait.h> 
 
-/*****************************************************
- * Global Constants
-*****************************************************/
+void mask_sigpipe();
 
-// Magic Numbers
-#define FOREVER 1
-#define usec_delay 1 
-#define ten_usec_delay 10
-#define hun_usec_delay 100
-#define msec_delay 1
-#define ten_msec_delay 10
-#define hun_msec_delay 100
-#define sec_delay 1000
+void mask_sigterm();
 
-/*****************************************************
- * Modifiable Globals
-*****************************************************/
+void sigterm_handler(int signo);
 
-// Threads
-extern pthread_mutex_t lock;
+void sigpipe_handler(int signo);
 
-// Rows and Cols
-extern int row_pos_ones;
-extern int row_pos_tens;
-extern int col_pos_ones;
-extern int col_pos_tens;
+void set_sig_handler();
 
-// Server
-extern int server_connected;
-
-#endif //GLOBALS_DEFINED
+#endif //SIGNAL_HANDLER_DEFINED

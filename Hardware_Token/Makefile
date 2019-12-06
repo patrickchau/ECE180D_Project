@@ -3,8 +3,8 @@
 CC = gcc
 CFLAGS = -Wall -Wextra
 LDLIBS = -pthread -lwiringPi
-OPS = -g -o
-OBJFILES = hardware_token.o hardware.o network.o
+OPS = -g -o 
+OBJFILES = hardware_token.o hardware.o network.o signal_handler.o
 TARGET = hardware_token
 
 all: $(OBJFILES)
