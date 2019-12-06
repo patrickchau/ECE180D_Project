@@ -97,9 +97,9 @@ void* run_display(void* arg) {
             }
 
             // Other thread only reads from globals so no need for lock
-            blink_segment(S2, row_pos_tens , hun_usec_delay);
-            blink_segment(S3, row_pos_ones , hun_usec_delay);
-            blink_segment(S1, LOWERCASE_R, hun_usec_delay);
+            blink_segment(S2, integer_to_display(row_pos_tens) , hun_usec_delay);
+            blink_segment(S3, integer_to_display(row_pos_ones) , hun_usec_delay);
+            blink_segment(S1, character_to_display('r'), hun_usec_delay);
         }
         else{
             if(!button1_off && !button1_held){
@@ -134,9 +134,9 @@ void* run_display(void* arg) {
             }
 
             // Other thread only reads from globals so no need for lock
-            blink_segment(S2, col_pos_tens , hun_usec_delay);
-            blink_segment(S3, col_pos_ones , hun_usec_delay);
-            blink_segment(S1, LOWERCASE_C, hun_usec_delay);
+            blink_segment(S2, integer_to_display(col_pos_tens), hun_usec_delay);
+            blink_segment(S3, integer_to_display(col_pos_ones), hun_usec_delay);
+            blink_segment(S1, character_to_display('c'), hun_usec_delay);
         }    
     }
 
@@ -176,337 +176,100 @@ void init_pins(){
     digitalWrite(S3, LOW);
 }
 
+void blink_segment(const int seg, const unsigned char display_char, int time_delay) {
 
-void blink_segment(const int seg, int num_to_display, int time_delay) {
+    const unsigned char mask = 0x01;
+
+    // In case pin mappings are changed.
+    unsigned int led[NUM_SEGS] = {A,B,C,D,E,F,G};
+
+    // Turn Segment on (Common Cathode display).
+    digitalWrite(seg, LOW);
+
+    for (int i = 0; i < NUM_SEGS; i++) {
+        unsigned char tmp = (display_char >> i) & mask;
+        if(tmp == 0x01) {
+            //Blink this LED
+            digitalWrite(led[i], HIGH);
+            delayMicroseconds(time_delay);
+            digitalWrite(led[i], LOW);
+        } else {
+            //Leave LED off
+            delayMicroseconds(time_delay);
+            digitalWrite(led[i], LOW);
+        }
+    }
+
+    // Turn Segment off (Common Cathode display).
+    digitalWrite(seg, HIGH);
+}
+
+unsigned char integer_to_display(int num_to_display) {
 
     switch(num_to_display) {
         case 0:
-                digitalWrite(seg, LOW);
-
-                digitalWrite(A, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(A, LOW);
-
-                digitalWrite(B, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(B, LOW);
-
-                digitalWrite(C, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(C, LOW);
-
-                digitalWrite(D, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(D, LOW);
-
-                digitalWrite(E, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(E, LOW);
-
-                digitalWrite(F, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(F, LOW);
-
-                digitalWrite(G, LOW);
+                return 0x3F;
                 break;
-
         case 1:
-                digitalWrite(seg, LOW);
-
-                digitalWrite(A, LOW);
-
-                digitalWrite(B, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(B, LOW);
-
-                digitalWrite(C, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(C, LOW);
-
-                digitalWrite(D, LOW);
-
-                digitalWrite(E, LOW);
-
-                digitalWrite(F, LOW);
-
-                digitalWrite(G, LOW);
+                return 0x06;
                 break;
-
         case 2:
-                digitalWrite(seg, LOW);
-
-                digitalWrite(A, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(A, LOW);
-
-                digitalWrite(B, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(B, LOW);
-
-                digitalWrite(C, LOW);
-
-                digitalWrite(D, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(D, LOW);
-
-                digitalWrite(E, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(E, LOW);
-
-                digitalWrite(F, LOW);
-
-                digitalWrite(G, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(G, LOW);
+                return 0x5B;
                 break;
-
         case 3:
-                digitalWrite(seg, LOW);
-
-                digitalWrite(A, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(A, LOW);
-
-                digitalWrite(B, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(B, LOW);
-
-                digitalWrite(C, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(C, LOW);
-
-                digitalWrite(D, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(D, LOW);
-
-                digitalWrite(E, LOW);
-
-                digitalWrite(F, LOW);
-
-                digitalWrite(G, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(G, LOW);
+                return 0x4F;
                 break;
-
         case 4:
-                digitalWrite(seg, LOW);
-
-                digitalWrite(A, LOW);
-
-                digitalWrite(B, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(B, LOW);
-
-                digitalWrite(C, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(C, LOW);
-
-                digitalWrite(D, LOW);
-
-                digitalWrite(E, LOW);
-               
-                digitalWrite(F, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(F, LOW);
-
-                digitalWrite(G, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(G, LOW);
+                return 0x66;
                 break;
         case 5:
-                digitalWrite(seg, LOW);
-
-                digitalWrite(A, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(A, LOW);
-
-                digitalWrite(B, LOW);
-
-                digitalWrite(C, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(C, LOW);
-
-                digitalWrite(D, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(D, LOW);
-
-                digitalWrite(E, LOW);
-               
-                digitalWrite(F, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(F, LOW);
-
-                digitalWrite(G, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(G, LOW);
+                return 0x6D;
                 break;
         case 6:
-                digitalWrite(seg, LOW);
-
-                digitalWrite(A, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(A, LOW);
-
-                digitalWrite(B, LOW);
-
-                digitalWrite(C, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(C, LOW);
-
-                digitalWrite(D, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(D, LOW);
-
-
-                digitalWrite(E, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(E, LOW);
-               
-                digitalWrite(F, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(F, LOW);
-
-                digitalWrite(G, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(G, LOW);
+                return 0x7D;
                 break;
         case 7:
-                digitalWrite(seg, LOW);
-
-                digitalWrite(A, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(A, LOW);
-
-                digitalWrite(B, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(B, LOW);
-
-                digitalWrite(C, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(C, LOW);
-
-                digitalWrite(D, LOW);
-
-                digitalWrite(E, LOW);
-               
-                digitalWrite(F, LOW);
-
-                digitalWrite(G, LOW);
+                return 0x07;
                 break;
         case 8:
-                digitalWrite(seg, LOW);
-
-                digitalWrite(A, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(A, LOW);
-
-                digitalWrite(B, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(B, LOW);
-
-                digitalWrite(C, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(C, LOW);
-
-                digitalWrite(D, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(D, LOW);
-
-                digitalWrite(E, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(E, LOW);
-               
-                digitalWrite(F, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(F, LOW);
-
-                digitalWrite(G, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(G, LOW);
+                return 0x7F;
                 break;
         case 9:
-                digitalWrite(seg, LOW);
-
-                digitalWrite(A, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(A, LOW);
-
-                digitalWrite(B, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(B, LOW);
-
-                digitalWrite(C, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(C, LOW);
-
-                digitalWrite(D, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(D, LOW);
-
-                digitalWrite(E, LOW);
-               
-                digitalWrite(F, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(F, LOW);
-
-                digitalWrite(G, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(G, LOW);
-                break;
-        case 10:
-                digitalWrite(seg, LOW);
-
-                digitalWrite(A, LOW);
-
-                digitalWrite(B, LOW);
-
-                digitalWrite(C, LOW);
-
-                digitalWrite(D, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(D, LOW);
-
-                digitalWrite(E, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(E, LOW);
-               
-                digitalWrite(F, LOW);
-
-                digitalWrite(G, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(G, LOW);
-                break;
-        case 11:
-                digitalWrite(seg, LOW);
-
-                digitalWrite(A, LOW);
-
-                digitalWrite(B, LOW);
-
-                digitalWrite(C, LOW);
-
-                digitalWrite(D, LOW);
-
-                digitalWrite(E, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(E, LOW);
-               
-                digitalWrite(F, LOW);
-
-                digitalWrite(G, HIGH);
-                delayMicroseconds(time_delay);
-                digitalWrite(G, LOW);
+                return 0x6F;
                 break;
         default:
-                digitalWrite(seg, LOW);
-                digitalWrite(A, LOW);
-                digitalWrite(B, LOW);
-                digitalWrite(C, LOW);
-                digitalWrite(D, LOW);
-                digitalWrite(E, LOW);
-                digitalWrite(F, LOW);
-                digitalWrite(G, LOW);
+                return 0x00;
                 break;
     }
-    digitalWrite(seg, HIGH);
 }
+
+unsigned char character_to_display(char char_to_display) {
+
+    switch(char_to_display) {
+        case 'r':
+                return 0x50;
+                break;
+        case 'c':
+                return 0x58;
+                break;
+        case 'o':
+                return 0x5C;
+                break;
+        case 'n':
+                return 0x54;
+                break;
+        case 'e':
+                return 0x79;
+                break;
+        case 't':
+                return 0x78;
+                break;
+        case 'g':
+                return 0x6F;
+                break;
+        default:
+                return 0x00;
+                break;
+    }
+}
+

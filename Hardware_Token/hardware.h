@@ -45,8 +45,8 @@
 #define BN2 25
 #define LED 26
 #define S3 27
-#define LOWERCASE_C 10
-#define LOWERCASE_R 11
+
+#define NUM_SEGS 7
 
 /******************************************************
  * Function: init_pins
@@ -82,7 +82,7 @@ void* run_display(void* arg);
 /******************************************************
  * Function: init_pins
  *-----------------------------------------------------
- * Initializes GPIO pins with wiringPi.
+ * Turns on and off the LED for the segment.
  *-----------------------------------------------------
  * Return Values:
  * None.
@@ -90,11 +90,43 @@ void* run_display(void* arg);
  * Inputs:
  * seg is the GPIO pin corresponding to the common
  * cathode of the 7_seg display.
- * num_to_display is the number that will be displayed
- * on the seven segment display.
+ * display_Char is an unsigned char that corresponds to
+ * the bitmap of LEDs for the 7_seg that are on and off
  * time_delay is the time in usec that will be used in
  * between blinking LEDs of 7_seg.
 ******************************************************/
-void blink_segment(const int seg, int num_to_display, int time_delay);
+void blink_segment(const int seg, const unsigned char display_char, int time_delay);
+
+/******************************************************
+ * Function: integer_to_display
+ *-----------------------------------------------------
+ * Converts an int to an unsigned char bitmap used to
+ * blink the LEDS of the segment to write the int.
+ *-----------------------------------------------------
+ * Return Value:
+ * Returns an unsigned char that is properly aligned to
+ * be used for blink segment
+ * ----------------------------------------------------
+ * Inputs:
+ * Takes as input an integer that will be converted to
+ * a bitmap for the LEDs of the seven segment display
+******************************************************/
+unsigned char integer_to_display(int num_to_display);
+
+/******************************************************
+ * Function: character_to_display
+ *-----------------------------------------------------
+ * Converts a char to an unsigned char bitmap used to
+ * blink the LEDS of the segment to write the int.
+ *-----------------------------------------------------
+ * Return Value:
+ * Returns an unsigned char that is properly aligned to
+ * be used for blink segment
+ * ----------------------------------------------------
+ * Inputs:
+ * Takes as input a char that will be converted to
+ * a bitmap for the LEDs of the seven segment display
+******************************************************/
+unsigned char character_to_display(char char_to_display);
 
 #endif //HARDWARE_DEFINED
