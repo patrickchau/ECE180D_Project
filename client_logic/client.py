@@ -8,7 +8,6 @@ import math
 # static IP of server
 host = "192.168.4.1"
 port = 8080
-closeCondition = False
 _BAUDRATE = 4096
 # button to send position to server
 _POS_SWITCH = 17
@@ -18,6 +17,9 @@ _LED2 = 19
 _LED3 = 20
 _LED4 = 21
 i_time = datetime.datetime.now() # get start time
+
+closecondition = True
+client = None
 
 def getMAC(interface='wlan0'):
   # Return the MAC address of the specified interface
@@ -122,6 +124,7 @@ def checkClose(): # check if we need to close connection, if so set closeConditi
 def runClient():
   print("running")
   # initiate connection to server
+  closeCondition = True
   client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   client.connect((host, port))
   time.sleep(5) # allow for time for handshake to complete
@@ -143,7 +146,21 @@ def runClient():
       succ = client.recv(_BAUDRATE).decode('utf-8')
       print(succ)
       client.close()
-      break
+      while True:
+        print("attempting to reconnect")
+        time.sleep(10)
+        try:
+            print("attempting")
+            client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            client.connect((host, port))
+            time.sleep(5)
+            sendMessage("start", client) # send over the MAC address for this pi
+            print("Connected")
+            closeCondition = False;
+            break
+        except socket.error:
+            time.sleep(10)
+            print("did not connect")
   #TODO: allow for reconnection
 
 if __name__ == "__main__":
