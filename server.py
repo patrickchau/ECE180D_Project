@@ -13,7 +13,6 @@ from _thread import *
 import threading
 import time
 import errno
-import signal
 
 clientList = []
 macToClient=defaultdict(client) # map for mac->client
@@ -69,6 +68,9 @@ def each_client(c):
                 
             return #we are out of here
         except socket.error as e:   # catch if connection is reset (i.e client code is stopped)
+            print_lock.acquire()
+            print("in this section",c)
+            print_lock.release()
             if e.errno != errno.ECONNRESET:
                 raise
             lightUp.remove(macId)
