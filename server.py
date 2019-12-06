@@ -45,13 +45,13 @@ def each_client(c):
     count = 1
     macId=None
     while True:
-        signal.signal(signal.SIGPIPE, signal.SIG_IGN)
+        
         buffer=None
         c.settimeout(10) #timeout 10 secs for now,client need to constantly send msg
         try:
             buffer=c.recv(4096).decode('utf-8')
             print("received message: " + buffer)
-        except socket.timeout:  # timeout error catch
+        except IOError or socket.timeout:  # timeout error catch
             print_lock.acquire()
             print("time out occured on ",c)
             print_lock.release()
@@ -73,6 +73,7 @@ def each_client(c):
                 raise
             lightUp.remove(macId)
             break
+            
 
         # Block to parse all possible client inputs
         _type,msg=buffer.split(",") # assume client sends in this format
