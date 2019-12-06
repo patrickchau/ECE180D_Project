@@ -13,6 +13,7 @@ from _thread import *
 import threading
 import time
 import errno
+import signal
 
 clientList = []
 macToClient=defaultdict(client) # map for mac->client
@@ -44,6 +45,7 @@ def each_client(c):
     count = 1
     macId=None
     while True:
+        signal.signal(signal.SIGPIPE, signal.SIG_IGN)
         buffer=None
         c.settimeout(10) #timeout 10 secs for now,client need to constantly send msg
         try:
@@ -64,9 +66,8 @@ def each_client(c):
 
                 lightUp.remove(macId)
                 addLock.release()
-                data="closed"
-                c.send(data.encode('utf-8')) # encode data to correct type
-                break
+                
+            return #we are out of here
         except socket.error as e:   # catch if connection is reset (i.e client code is stopped)
             if e.errno != errno.ECONNRESET:
                 raise
