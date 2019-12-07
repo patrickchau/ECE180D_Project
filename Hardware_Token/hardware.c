@@ -63,7 +63,7 @@ void* run_display(void* arg) {
     int button2_held = 0;
     int button2_off = 1;
 
-    while (FOREVER) {
+    while (!program_end) {
         if(server_connected == 1) {
             // Run Normal Hardware code.
             switch_on = digitalRead(SW);
@@ -105,7 +105,8 @@ void* run_display(void* arg) {
                 // Other thread only reads from globals so no need for lock
                 blink_segment(S2, integer_to_display(row_pos_tens) , hun_usec_delay);
                 blink_segment(S3, integer_to_display(row_pos_ones) , hun_usec_delay);
-                blink_segment(S1, character_to_display('r'), hun_usec_delay);
+                blink_segment(S1, character_to_display('r'), hun_usec_delay); 
+
             }
             else{
                 if(!button1_off && !button1_held){
@@ -150,6 +151,7 @@ void* run_display(void* arg) {
         }
     }
 
+    fprintf(stdout, "Hardware thread exiting...\n");
     return NULL;
 }
 
@@ -297,7 +299,7 @@ void display_connecting() {
     const char msg[11] = "connecting";
     int init_time = millis();
     int i = -2;
-    while(!server_connected) {
+    while(!server_connected && !program_end) {
         int curr_time = millis();
 
         // If 400 msec have passed scroll over 1.

@@ -41,20 +41,34 @@
 #include <string.h>
 #include <errno.h>
 
-void mask_sigpipe() {
-	sigset_t mask;
-	sigemptyset(&mask); 
-    sigaddset(&mask, SIGPIPE);
-                
-    pthread_sigmask(SIG_BLOCK, &mask, NULL);
-}
-
 void mask_sigterm() {
 	sigset_t mask;
 	sigemptyset(&mask); 
     sigaddset(&mask, SIGTERM); 
                 
-    pthread_sigmask(SIG_BLOCK, &mask, NULL);
+    if(pthread_sigmask(SIG_BLOCK, &mask, NULL) != 0) {
+        fprintf(stderr, "pthread_sigmask failed with error: %s\n", strerror(errno));
+    }
+}
+
+void mask_sigtstp() {
+	sigset_t mask;
+	sigemptyset(&mask); 
+    sigaddset(&mask, SIGTSTP); 
+                
+    if(pthread_sigmask(SIG_BLOCK, &mask, NULL) != 0) {
+        fprintf(stderr, "pthread_sigmask failed with error: %s\n", strerror(errno));
+    }
+}
+
+void mask_sigpipe() {
+	sigset_t mask;
+	sigemptyset(&mask); 
+    sigaddset(&mask, SIGPIPE);
+                
+    if(pthread_sigmask(SIG_BLOCK, &mask, NULL) != 0) {
+        fprintf(stderr, "pthread_sigmask failed with error: %s\n", strerror(errno));
+    }
 }
 
 void sigterm_handler(int signo)  {
@@ -64,8 +78,17 @@ void sigterm_handler(int signo)  {
 
     fprintf(stdout, "SIGINT Occured! Closing Program.\n");
     clear_pins();
-    _Exit(0);
+    program_end = 1;
+}
 
+void sigtstp_handler(int signo)  {
+  
+    // Remove compiler warnings on unused variables.
+    (void)signo;
+
+    fprintf(stdout, "SIGTSTP Occured! Closing Program.\n");
+    clear_pins();
+    program_end = 1;
 }
 
 void sigpipe_handler(int signo)  {
@@ -79,10 +102,14 @@ void sigpipe_handler(int signo)  {
 void set_sig_handlers() {
 
         if (signal(SIGINT, sigterm_handler) == SIG_ERR) { 
-            fprintf(stderr, "sigaction failed with error: %s\n", strerror(errno));
+            fprintf(stderr, "signal failed with error: %s\n", strerror(errno));
+        }
+
+        if (signal(SIGTSTP, sigtstp_handler) == SIG_ERR) { 
+            fprintf(stderr, "signal failed with error: %s\n", strerror(errno));
         }
 
         if (signal(SIGPIPE, sigpipe_handler) == SIG_ERR) { 
-            fprintf(stderr, "sigaction failed with error: %s\n", strerror(errno));
+            fprintf(stderr, "signal failed with error: %s\n", strerror(errno));
         }
 }

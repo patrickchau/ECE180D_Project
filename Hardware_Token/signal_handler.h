@@ -35,14 +35,50 @@
 #include <sys/types.h>
 #include <sys/wait.h> 
 
+/******************************************************
+ * Functions: mask_signal
+ *-----------------------------------------------------
+ * Masks signal sent to the thread that calls this
+ * function
+ *-----------------------------------------------------
+ * Return Values:
+ * None.
+ * ----------------------------------------------------
+ * Inputs:
+ * None.
+******************************************************/
+void mask_sigterm();
+void mask_sigtstp();
 void mask_sigpipe();
 
-void mask_sigterm();
-
+/******************************************************
+ * Functions: signal_handler
+ *-----------------------------------------------------
+ * Functions called by POSIX signal library to handle
+ * the respective signal. 
+ *-----------------------------------------------------
+ * Return Values:
+ * None.
+ * ----------------------------------------------------
+ * Inputs:
+ * None.
+******************************************************/
 void sigterm_handler(int signo);
-
+void sigtstp_handler(int signo);
 void sigpipe_handler(int signo);
 
+/******************************************************
+ * Functions: set_sig_handlers
+ *-----------------------------------------------------
+ * Sets function pointers to the signal_handler 
+ * corresponding to the signal needing to be handled
+ *-----------------------------------------------------
+ * Return Values:
+ * None.
+ * ----------------------------------------------------
+ * Inputs:
+ * None.
+******************************************************/
 void set_sig_handlers();
 
 #endif //SIGNAL_HANDLER_DEFINED

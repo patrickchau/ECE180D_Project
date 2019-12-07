@@ -5,7 +5,7 @@
 /*                          Hardware Token                               */
 /*           https://github.com/patrickchau/ECE180D_Project              */
 /*************************************************************************/
-/*                Copyright  10-31-2019 Joseph Miller.                   */
+/*                Copyright  12-5-2019 Joseph Miller.                   */
 /*                                                                       */
 /* Permission is hereby granted, free of charge, to any person obtaining */
 /* a copy of this software and associated documentation files (the       */
@@ -53,6 +53,7 @@
 
 // Threads
 extern pthread_mutex_t lock;
+extern int program_end;
 
 // Rows and Cols
 extern int row_pos_ones;

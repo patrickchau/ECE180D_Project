@@ -40,6 +40,7 @@
 // Socket Params
 #define BUFFER_MAX 128 
 #define PORT 8080 
+#define SERVER_IP "192.168.43.190"
 #define SA struct sockaddr
 
 /******************************************************

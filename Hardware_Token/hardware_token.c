@@ -57,7 +57,7 @@
 // Lock Declaration
 pthread_mutex_t lock;
 
-
+int program_end = 0;
 int main(void) {
     
     // Init GPIO pin mappings and set signal handlers.
@@ -76,7 +76,7 @@ int main(void) {
 
     // Attempt communication with server
     int sockfd; 
-    while(attempt_connection(&sockfd));
+    while(attempt_connection(&sockfd) && !program_end);
      
     // Communicate with server
     pthread_create(&network_thread, NULL, server_communication, &sockfd);
@@ -89,7 +89,7 @@ int main(void) {
     pthread_exit(NULL); 
 
     // Close the socket 
-    close(sockfd); 
+    close(sockfd);
 
     return 0;
 }

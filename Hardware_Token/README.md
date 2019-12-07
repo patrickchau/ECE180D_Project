@@ -38,5 +38,4 @@ pins located in hardware.h. For a diagram mapping GPIO pins to WiringPI GPIO cli
 # NOTICE:
 This is currently under development. The following have yet to be implemented:
 * 3D printed case for housing all of the components.
-* Extensive error handling.
-* Bugtesting.
+* PCB to facilitate soldering

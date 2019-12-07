@@ -44,6 +44,7 @@
 // Sockets
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <fcntl.h>
 
 // Allows for error codes
 #include <errno.h>
@@ -78,26 +79,86 @@ int attempt_connection(int* sockfd){
     // Setup Server Info
     bzero(&servaddr, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
-    servaddr.sin_addr.s_addr = inet_addr("192.168.43.190");
+    servaddr.sin_addr.s_addr = inet_addr(SERVER_IP);
     servaddr.sin_port = htons(PORT); 
-  
-    // Connect the client socket to server socket 
-    if (connect(attempted_sockfd, (SA*)&servaddr, sizeof(servaddr)) == -1) { 
-        fprintf(stderr, "Error Connecting to Server: %s\n", strerror(errno));
 
-        // Close failed socket
-        close(attempted_sockfd);  
-
-        // Wait one second before reattempting
-        delay(sec_delay);
+    // Set socket to non-blocking.
+    long sockfd_flags = fcntl(attempted_sockfd, F_GETFL, NULL);
+    if(sockfd_flags < 0) {
+        fprintf(stderr, "Error obtaining sockfd flags: %s\n", strerror(errno));
         return FAILED_CONN;
-    } 
-    else{
-        // Set sockfd to succesfully connected socket
-        *sockfd = attempted_sockfd;
-        server_connected = 1;
     }
-    
+    sockfd_flags |= O_NONBLOCK; 
+    if(fcntl(attempted_sockfd, F_SETFL, sockfd_flags) < 0) { 
+        fprintf(stderr, "Error setting sockfd flags: %s\n", strerror(errno)); 
+        return FAILED_CONN;
+    }
+
+    // Connect the client socket to server socket 
+    if (connect(attempted_sockfd, (SA*)&servaddr, sizeof(servaddr)) < 0) { 
+        if (errno == EINPROGRESS) {
+            // Set timeout struct for select.
+            fd_set fdset;
+            struct timeval tv;
+            FD_ZERO(&fdset);
+            FD_SET(attempted_sockfd, &fdset);
+            tv.tv_sec = 2;             /* 2 second timeout */
+            tv.tv_usec = 0;
+
+            int retcode = select(attempted_sockfd+1, NULL, &fdset, NULL, &tv);
+            if(retcode < 0 && errno != EINTR) {
+                fprintf(stderr, "Error connecting to server: %s\n", strerror(errno));
+
+                // Close failed socket
+                close(attempted_sockfd);
+                return FAILED_CONN;
+            }
+            else if (retcode > 0) { 
+                // Socket selected for write 
+                socklen_t lon = sizeof(int);
+                int valopt;
+                if (getsockopt(attempted_sockfd, SOL_SOCKET, SO_ERROR, (void*)(&valopt), &lon) < 0) {
+                    fprintf(stderr, "Error in getsockopt: %s\n", strerror(errno));
+
+                    // Close failed socket
+                    close(attempted_sockfd);
+                    return FAILED_CONN;
+                }
+                // Check the value returned... 
+                if (valopt != 0) { 
+                    fprintf(stderr, "Error in delayed connection: %s\n", strerror(valopt)); 
+
+                    // Close failed socket
+                    close(attempted_sockfd);
+                    return FAILED_CONN;
+                } 
+           }
+           else {
+               fprintf(stderr, "Select timed out\n"); 
+
+                // Close failed socket
+                close(attempted_sockfd);
+                return FAILED_CONN;
+           }
+        }
+    }
+
+    // Set back to blocking mode
+    sockfd_flags = fcntl(attempted_sockfd, F_GETFL, NULL);
+    if(sockfd_flags < 0) { 
+        fprintf(stderr, "Error obtaining sockfd flags: %s\n", strerror(errno)); 
+        exit(0); 
+    } 
+    sockfd_flags &= (~O_NONBLOCK); 
+    if(fcntl(attempted_sockfd, F_SETFL, sockfd_flags) < 0) { 
+        fprintf(stderr, "Error setting sockfd flags: %s\n", strerror(errno)); 
+        return FAILED_CONN;
+    }
+
+    // Set sockfd to succesfully connected socket
+    *sockfd = attempted_sockfd;
+    server_connected = 1;
+
     return SUCCESSFUL_CONN;
 }
 
@@ -105,6 +166,10 @@ void* server_communication(void* arg)
 { 
     // Get sockfd from pthread
     int sockfd = *(int *)arg;
+
+    // Don't allow this thread to handle these
+    mask_sigtstp();
+    mask_sigterm();
 
     // Strings
     char msg[BUFFER_MAX];
@@ -139,7 +204,7 @@ void* server_communication(void* arg)
     // Deliver MAC_ADDR to server
     write(sockfd, msg, sizeof(msg));
     
-    while (FOREVER) { 
+    while (!program_end) { 
         if(server_connected == 1){
             // Give server a chance to read and send messages
             delay(sec_delay);
@@ -169,12 +234,19 @@ void* server_communication(void* arg)
             }
         } else{
             // Reconnect to server.
-            while(attempt_connection(&sockfd));
+            while(attempt_connection(&sockfd)) {
+                // Check if program is still running.
+                if(program_end) {
+                    fprintf(stdout, "Network thread exiting...\n");
+                    return NULL;
+                }
+            }
             bzero(msg, sizeof(msg));
             sprintf(msg, "start,%s", MAC_ADDR);
             write(sockfd, msg, sizeof(msg));
         }
     }
 
+    fprintf(stdout, "Network thread exiting...\n");
     return NULL;
 } 
