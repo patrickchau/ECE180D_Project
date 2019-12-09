@@ -198,7 +198,7 @@ void* server_communication(void* arg)
     }
 
     // Write filepath to file containing MAC ADDR
-    sprintf(msg, "start,%s", MAC_ADDR);
+    sprintf(msg, "hwstart,%s", MAC_ADDR);
     fprintf(stdout, "Token sent: %s\n", msg);
 
     // Deliver MAC_ADDR to server
@@ -214,7 +214,10 @@ void* server_communication(void* arg)
             read(sockfd, msg, sizeof(msg));
             fprintf(stdout, "Server Returned: %s\n", msg);
 
-            if((strncmp(msg, "position", 8)) != 0) { 
+            if((strncmp(msg, "success", 7)) == 0) { 
+                fprintf(stdout, "client added successfully!");
+            }
+            else {
                 // Calculate row and col for token
                 pthread_mutex_lock(&lock);
                 int row = row_pos_tens*10 + row_pos_ones;
@@ -223,14 +226,9 @@ void* server_communication(void* arg)
 
                 // Format string for delivery
                 bzero(msg, sizeof(msg));
-                sprintf(msg, "Token sent: position,%d.%d", row, col);
+                sprintf(msg, "position,%d.%d", row, col);
                 write(sockfd, msg, sizeof(msg));
-                fprintf(stdout, "%s\n", msg);
-            }
-            else {
-                // Ping server to let it know we are still connected
-                write(sockfd, msg_nothing, sizeof(msg_nothing));
-                fprintf(stdout, "Nothing to send, pinging server\n");
+                fprintf(stdout, "Token sent: %s\n", msg);
             }
         } else{
             // Reconnect to server.
@@ -242,7 +240,7 @@ void* server_communication(void* arg)
                 }
             }
             bzero(msg, sizeof(msg));
-            sprintf(msg, "start,%s", MAC_ADDR);
+            sprintf(msg, "hwstart,%s", MAC_ADDR);
             write(sockfd, msg, sizeof(msg));
         }
     }
