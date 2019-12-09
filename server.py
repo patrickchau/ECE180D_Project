@@ -20,6 +20,12 @@ macToId=defaultdict(int)        # mac to client ID
 print_lock=threading.Lock()     # print locks
 addLock=threading.Lock()        # add client locks
 
+#Hardware token
+hw_token=client()
+hw_token_socket=None
+curr_row = 0;
+curr_col = 0;
+
 
 # linked list variables - maybe move to own object?
 size=0
@@ -86,6 +92,11 @@ def each_client(c):
                 data="client already exists"
                 c.send(data.encode('utf-8'))
                 continue
+            if not hw_token.macId:
+                data="hw token not ready yet!"
+                c.send(data.encode('utf-8'))
+                continue
+
             # print locks
             print_lock.acquire()
             print("add a new client ",c)
@@ -107,11 +118,23 @@ def each_client(c):
             size+=1
             id+=1
             macToId[macId]=id
+            macToClient[macId].row = curr_row
+            macToClient[macId].col = curr_col
+            data = "success"
+            hw_token_socket.send(data.encode('utf-8'))
             if not macId in lightUp:
                 lightUp.append(macId) # this adds new client to light up
             addLock.release()
 
             # let client know that it is now registered
+            data="registered"
+            c.send(data.encode('utf-8'))
+        elif _type == "hwstart":
+            print("Hardware token connnection!")
+            hw_token.macId=msg
+            hw_token_socket=c
+            
+            # let token know that it is now registered
             data="registered"
             c.send(data.encode('utf-8'))
         elif _type=="close":
@@ -137,19 +160,9 @@ def each_client(c):
             break
         elif _type=="position": # position message of format "position, row.col"
             print("now getting row and column from hardware token")
-            r,c = msg.split('.')
-            macToClient[macId].row = r
-            macToClient[macId].col = c
-        elif type=="hw":        # hardware token specific statement
-            row,col=msg.split(".")
-            lastPerson.col=col
-            lastPerson.row=row
-            key=lastPerson.macId
-            addLock.acquire()
-            macToClient[key]=lastPerson
-            addLock.release()
-            data="hw_ack"
-            c.send(data)
+            row,col = msg.split('.')
+            curr_row = row
+            curr_col = col
 
         # block to send data to client
         if macId in lightUp:
@@ -236,7 +249,7 @@ def loopThrough():
         """
 
 def runServer():
-    host="192.168.4.1"
+    host="192.168.43.190"
     serv=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     serv.bind((host,8080))
     serv.listen(10) #in case it takes time to acquire lock 
