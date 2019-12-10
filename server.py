@@ -23,8 +23,9 @@ addLock=threading.Lock()        # add client locks
 #Hardware token
 hw_token=client()
 hw_token_socket=None
-curr_row = 0;
-curr_col = 0;
+curr_row = 0
+curr_col= 0
+
 
 
 # linked list variables - maybe move to own object?
@@ -47,6 +48,11 @@ def each_client(c):
     global dummyHead
     global tail
     global lightUp
+    global curr_row
+    global curr_col
+    global hw_token_socket
+    global hw_token
+
     count = 1
     macId=None
     while True:
