@@ -39,6 +39,7 @@
 #include <stdlib.h> 
 #include <unistd.h>
 #include <netdb.h> 
+#include <string.h>
 
 // Multithreading
 #include <pthread.h> 
@@ -47,7 +48,8 @@
 int row_pos_ones = 0;
 int row_pos_tens = 0;
 int col_pos_ones = 0;
-int col_pos_tens = 0;   
+int col_pos_tens = 0;
+int msg_to_display = 0;
 
 void* run_display(void* arg) {
 
@@ -65,6 +67,13 @@ void* run_display(void* arg) {
 
     while (!program_end) {
         if(server_connected == 1) {
+
+            // Write out message from buffer if we have one
+            if(msg_to_display == 1) {
+                display_message(display_msg, strlen(display_msg));
+                msg_to_display = 0;
+            }
+
             // Run Normal Hardware code.
             switch_on = digitalRead(SW);
             button1_off = digitalRead(BN1);
@@ -147,7 +156,8 @@ void* run_display(void* arg) {
             }    
         } else {
             // Display connecting
-            display_connecting();
+            char connect_msg[11] = "connecting";
+            display_connecting(connect_msg, strlen(connect_msg));         
         }
     }
 
@@ -288,15 +298,20 @@ unsigned char character_to_display(char char_to_display) {
         case 'g':
                 return 0x6F;
                 break;
+        case 's':
+                return 0x6D;
+                break;
+        case 'u':
+                return 0x1C;
+                break;
         default:
                 return 0x00;
                 break;
     }
 }
 
-void display_connecting() {
+void display_connecting(char* msg, int len) {
 
-    const char msg[11] = "connecting";
     int init_time = millis();
     int i = -2;
     while(!server_connected && !program_end) {
@@ -305,32 +320,72 @@ void display_connecting() {
         // If 400 msec have passed scroll over 1.
         if(curr_time - init_time > 400) {
             i += 1;
-            if(i == 10) {
-                i = -2;
+            if(i == len) {
+                break;
             }
             init_time = curr_time;
         }
      
         // Allow it to scroll starting from the right.
-        if(i < 10 && i >= 0) {
+        if(i < len && i >= 0) {
             blink_segment(S1, character_to_display(msg[i]), hun_usec_delay);
         }
         else {
-            blink_segment(S1, character_to_display(msg['!']), hun_usec_delay);
+            blink_segment(S1, character_to_display(msg[' ']), hun_usec_delay);
         }
 
-        if(i + 1 < 10 && i + 1 >= 0) {
+        if(i + 1 < len && i + 1 >= 0) {
             blink_segment(S2, character_to_display(msg[i+1]), hun_usec_delay);
         }
         else {
-            blink_segment(S2, character_to_display(msg['!']), hun_usec_delay);
+            blink_segment(S2, character_to_display(msg[' ']), hun_usec_delay);
         }
         
-        if(i + 2 < 10 && i + 2 >= 0) {
+        if(i + 2 < len && i + 2 >= 0) {
             blink_segment(S3, character_to_display(msg[i+2]), hun_usec_delay);
         }
         else {
-            blink_segment(S3, character_to_display(msg['!']), hun_usec_delay);
+            blink_segment(S3, character_to_display(msg[' ']), hun_usec_delay);
+        }
+    }
+}
+
+void display_message(char* msg, int len) {
+
+    int init_time = millis();
+    int i = -2;
+    while(!program_end) {
+        int curr_time = millis();
+
+        // If 400 msec have passed scroll over 1.
+        if(curr_time - init_time > 400) {
+            i += 1;
+            if(i == len) {
+                break;
+            }
+            init_time = curr_time;
+        }
+     
+        // Allow it to scroll starting from the right.
+        if(i < len && i >= 0) {
+            blink_segment(S1, character_to_display(msg[i]), hun_usec_delay);
+        }
+        else {
+            blink_segment(S1, character_to_display(msg[' ']), hun_usec_delay);
+        }
+
+        if(i + 1 < len && i + 1 >= 0) {
+            blink_segment(S2, character_to_display(msg[i+1]), hun_usec_delay);
+        }
+        else {
+            blink_segment(S2, character_to_display(msg[' ']), hun_usec_delay);
+        }
+        
+        if(i + 2 < len && i + 2 >= 0) {
+            blink_segment(S3, character_to_display(msg[i+2]), hun_usec_delay);
+        }
+        else {
+            blink_segment(S3, character_to_display(msg[' ']), hun_usec_delay);
         }
     }
 }

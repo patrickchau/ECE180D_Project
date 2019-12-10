@@ -56,6 +56,7 @@
 
 
 int server_connected = 0;
+char display_msg[20] = "";
 
 int attempt_connection(int* sockfd){
 
@@ -176,7 +177,6 @@ void* server_communication(void* arg)
     char MAC_ADDR_PATH[BUFFER_MAX];
     char MAC_ADDR[18];
     char interface[6] = "wlan0";
-    char msg_nothing[8] = "nothing";
     
     // Zero out buffers
     bzero(msg, sizeof(msg));
@@ -216,6 +216,11 @@ void* server_communication(void* arg)
 
             if((strncmp(msg, "success", 7)) == 0) { 
                 fprintf(stdout, "client added successfully!");
+
+                // Allow hardware thread to write out success
+                bzero(display_msg, sizeof(display_msg));
+                sprintf(display_msg, "success");
+                msg_to_display = 1;
             }
             else {
                 // Calculate row and col for token

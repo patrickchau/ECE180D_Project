@@ -63,5 +63,7 @@ extern int col_pos_tens;
 
 // Server
 extern int server_connected;
+extern int msg_to_display;
+extern char display_msg[20];
 
 #endif //GLOBALS_DEFINED

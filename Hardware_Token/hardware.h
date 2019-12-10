@@ -145,14 +145,33 @@ unsigned char character_to_display(char char_to_display);
 /******************************************************
  * Function: display_connecting
  *-----------------------------------------------------
- * Scrolls connecting across the 7_segments
+ * Scrolls connecting across the 7_segments. Ends if
+ * server reconnects or SIGINT/SIGTSTP received
  *-----------------------------------------------------
  * Return Value:
  * None.
  * ----------------------------------------------------
  * Inputs:
- * None.
+ * mag is a character string to be scrolled across the
+ * display.
+ * len is the length of the string
 ******************************************************/
-void display_connecting();
+void display_connecting(char* msg, int len);
+
+/******************************************************
+ * Function: display_message
+ *-----------------------------------------------------
+ * Scrolls connecting across the 7_segments. Ends if
+ * SIGINT/SIGTSTP received
+ *-----------------------------------------------------
+ * Return Value:
+ * None.
+ * ----------------------------------------------------
+ * Inputs:
+ * mag is a character string to be scrolled across the
+ * display.
+ * len is the length of the string
+******************************************************/
+void display_message(char* msg, int len);
 
 #endif //HARDWARE_DEFINED
