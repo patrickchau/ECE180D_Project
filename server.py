@@ -58,10 +58,10 @@ def each_client(c):
     while True:
         
         buffer=None
-        c.settimeout(10) #timeout 10 secs for now,client need to constantly send msg
+        c.settimeout(10000) #timeout 10 secs for now,client need to constantly send msg
         try:
             buffer=c.recv(4096).decode('utf-8')
-            print("received message: " + buffer)
+            #print("received message: " + buffer)
         except IOError or socket.timeout:  # timeout error catch
             print_lock.acquire()
             print("time out occured on ",c)
@@ -91,13 +91,9 @@ def each_client(c):
 
         # Block to parse all possible client inputs
         _type,msg=buffer.split(",") # assume client sends in this format
-        print("type: " + _type)
+        #print("type: " + _type)
         if _type=="start":
             print("this is a start message!")
-            if macId:
-                data="client already exists"
-                c.send(data.encode('utf-8'))
-                continue
             if not hw_token.macId:
                 data="hw token not ready yet!"
                 c.send(data.encode('utf-8'))
@@ -112,6 +108,11 @@ def each_client(c):
             macId=msg
             newClient=client()
             newClient.macId=msg
+            if macToClient[msg].macId == msg:
+                data="client already exists"
+                lightUp.append(macId)
+                c.send(data.encode('utf-8'))
+                continue
 
             # update the linked list for snake
             addLock.acquire()
@@ -156,8 +157,6 @@ def each_client(c):
             if not target.prev:
                 target.next.prev=target.prev
 
-            del macToClient[macId]
-            del macToId[macId]
             size-=1
             lightUp.remove(macId)
             addLock.release()
@@ -165,7 +164,7 @@ def each_client(c):
             c.send(data.encode('utf-8'))
             break
         elif _type=="position": # position message of format "position, row.col"
-            print("now getting row and column from hardware token")
+            #print("now getting row and column from hardware token")
             row,col = msg.split('.')
             curr_row = row
             curr_col = col
@@ -202,7 +201,7 @@ def loopThrough():
     while True:
         clients = ""
         for c in lightUp:
-            clients = clients + c + " "
+            clients = clients + "\n" + c + " row=" + str(macToClient[c].row) + " col=" + str(macToClient[c].col)
         print("Clients: " + clients)
         time.sleep(5)
 
