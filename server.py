@@ -90,7 +90,13 @@ def each_client(c):
             
 
         # Block to parse all possible client inputs
-        _type,msg=buffer.split(",") # assume client sends in this format
+        try:
+            _type,msg=buffer.split(",") # assume client sends in this format
+        except ValueError:
+            _type="error"
+            msg=""
+            if macId in lightUp:
+                lightUp.remove(macId)
         #print("type: " + _type)
         if _type=="start":
             print("this is a start message!")
@@ -177,7 +183,10 @@ def each_client(c):
             c.send(data.encode('utf-8'))
         else:
             data = "nothing"
-            c.send(data.encode('utf-8'))
+            try:
+                c.send(data.encode('utf-8'))
+            except BrokenPipeError:
+                break;
 
     # if we break from the while True, close the client connection.
     # this should only happen when we send a close statement
