@@ -159,7 +159,10 @@ def each_client(c):
             del macToClient[macId]
             del macToId[macId]
             size-=1
-            lightUp.remove(macId)
+            try:
+	    	lightUp.remove(macId)
+	    except ValueError:
+		pass
             addLock.release()
             data="closed"
             c.send(data.encode('utf-8'))
