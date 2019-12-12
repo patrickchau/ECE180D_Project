@@ -165,9 +165,9 @@ def each_client(c):
 
             size-=1
             try:
-	    	lightUp.remove(macId)
-	    except ValueError:
-		pass
+                lightUp.remove(macId)
+            except ValueError:
+                pass
             addLock.release()
             data="closed"
             c.send(data.encode('utf-8'))
