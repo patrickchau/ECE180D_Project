@@ -212,9 +212,9 @@ void* server_communication(void* arg)
             // Read data from server
             bzero(msg, sizeof(msg));
             read(sockfd, msg, sizeof(msg));
-            fprintf(stdout, "Server Returned: %s\n", msg);
+            //fprintf(stdout, "Server Returned: %s\n", msg);
 
-            if((strncmp(msg, "success", 7)) == 0) { 
+            if((strncmp(msg, "nothingsuccess", 14)) == 0) { 
                 fprintf(stdout, "client added successfully!");
 
                 // Allow hardware thread to write out success
@@ -222,19 +222,19 @@ void* server_communication(void* arg)
                 sprintf(display_msg, "success");
                 msg_to_display = 1;
             }
-            else {
-                // Calculate row and col for token
-                pthread_mutex_lock(&lock);
-                int row = row_pos_tens*10 + row_pos_ones;
-                int col = col_pos_tens*10 + col_pos_ones;
-                pthread_mutex_unlock(&lock);
+            
+            // Calculate row and col for token
+            pthread_mutex_lock(&lock);
+            int row = row_pos_tens*10 + row_pos_ones;
+            int col = col_pos_tens*10 + col_pos_ones;
+            pthread_mutex_unlock(&lock);
 
-                // Format string for delivery
-                bzero(msg, sizeof(msg));
-                sprintf(msg, "position,%d.%d", row, col);
-                write(sockfd, msg, sizeof(msg));
-                fprintf(stdout, "Token sent: %s\n", msg);
-            }
+            // Format string for delivery
+            bzero(msg, sizeof(msg));
+            sprintf(msg, "position,%d.%d", row, col);
+            write(sockfd, msg, sizeof(msg));
+            fprintf(stdout, "Token sent: %s\n", msg);
+            
         } else{
             // Reconnect to server.
             while(attempt_connection(&sockfd)) {
