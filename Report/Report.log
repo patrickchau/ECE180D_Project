@@ -1,0 +1,479 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7050 64-bit) (preloaded format=pdflatex 2019.7.13)  14 DEC 2019 00:13
+entering extended mode
+**./Report.tex
+(Report.tex
+LaTeX2e <2018-12-01>
+("C:\Program Files\MiKTeX 2.9\tex/latex/base\article.cls"
+Document Class: article 2018/09/03 v1.4i Standard LaTeX document class
+("C:\Program Files\MiKTeX 2.9\tex/latex/base\size10.clo"
+File: size10.clo 2018/09/03 v1.4i Standard LaTeX file (size option)
+)
+\c@part=\count80
+\c@section=\count81
+\c@subsection=\count82
+\c@subsubsection=\count83
+\c@paragraph=\count84
+\c@subparagraph=\count85
+\c@figure=\count86
+\c@table=\count87
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+("C:\Program Files\MiKTeX 2.9\tex/latex/graphics\graphicx.sty"
+Package: graphicx 2017/06/01 v1.1a Enhanced LaTeX Graphics (DPC,SPQR)
+
+("C:\Program Files\MiKTeX 2.9\tex/latex/graphics\keyval.sty"
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks14
+)
+("C:\Program Files\MiKTeX 2.9\tex/latex/graphics\graphics.sty"
+Package: graphics 2017/06/25 v1.2c Standard LaTeX Graphics (DPC,SPQR)
+
+("C:\Program Files\MiKTeX 2.9\tex/latex/graphics\trig.sty"
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
+)
+("C:\Program Files\MiKTeX 2.9\tex/latex/graphics-cfg\graphics.cfg"
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 99.
+
+("C:\Program Files\MiKTeX 2.9\tex/latex/graphics-def\pdftex.def"
+File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen103
+\Gin@req@width=\dimen104
+)
+("C:\Program Files\MiKTeX 2.9\tex/generic/babel\babel.sty"
+Package: babel 2019/06/03 3.32 The Babel package
+
+("C:\Program Files\MiKTeX 2.9\tex/generic/babel\switch.def"
+File: switch.def 2019/06/03 3.32 Babel switching mechanism
+)
+*************************************
+* Local config file bblopts.cfg used
+*
+(C:\Users\firey\AppData\Roaming\MiKTeX\2.9\tex/latex/arabi\bblopts.cfg
+File: bblopts.cfg 2005/09/08 v0.1 add Arabic and Farsi to "declared" options of
+ babel
+)
+("C:\Program Files\MiKTeX 2.9\tex/latex/babel-english\english.ldf"
+Language: english 2017/06/06 v3.3r English support from the babel system
+
+("C:\Program Files\MiKTeX 2.9\tex/generic/babel\babel.def"
+File: babel.def 2019/06/03 3.32 Babel common definitions
+\babel@savecnt=\count88
+\U@D=\dimen105
+
+("C:\Program Files\MiKTeX 2.9\tex/generic/babel\txtbabel.def")
+\bbl@dirlevel=\count89
+)
+\l@canadian = a dialect from \language\l@american 
+\l@australian = a dialect from \language\l@british 
+\l@newzealand = a dialect from \language\l@british 
+))
+("C:\Program Files\MiKTeX 2.9\tex/latex/base\inputenc.sty"
+Package: inputenc 2018/08/11 v1.3c Input encoding file
+\inpenc@prehook=\toks15
+\inpenc@posthook=\toks16
+
+("C:\Program Files\MiKTeX 2.9\tex/latex/base\latin1.def"
+File: latin1.def 2018/08/11 v1.3c Input encoding file
+))
+(C:\Users\firey\AppData\Roaming\MiKTeX\2.9\tex/latex/comment\comment.sty
+\CommentStream=\write3
+
+Excluding comment 'comment')
+(C:\Users\firey\AppData\Roaming\MiKTeX\2.9\tex/latex/subfigure\subfigure.sty
+Package: subfigure 2002/07/30 v2.1.4 subfigure package
+\subfigtopskip=\skip43
+\subfigcapskip=\skip44
+\subfigcaptopadj=\dimen106
+\subfigbottomskip=\skip45
+\subfigcapmargin=\dimen107
+\subfiglabelskip=\skip46
+\c@subfigure=\count90
+\c@lofdepth=\count91
+\c@subtable=\count92
+\c@lotdepth=\count93
+
+****************************************
+* Local config file subfigure.cfg used *
+****************************************
+(C:\Users\firey\AppData\Roaming\MiKTeX\2.9\tex/latex/subfigure\subfigure.cfg)
+\subfig@top=\skip47
+\subfig@bottom=\skip48
+)
+(C:\Users\firey\AppData\Roaming\MiKTeX\2.9\tex/latex/placeins\placeins.sty
+Package: placeins 2005/04/18  v 2.2
+)
+("C:\Program Files\MiKTeX 2.9\tex/latex/float\float.sty"
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count94
+\float@exts=\toks17
+\float@box=\box27
+\@float@everytoks=\toks18
+\@floatcapt=\box28
+) (Report.aux)
+\openout1 = `Report.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+
+(C:\Users\firey\AppData\Roaming\MiKTeX\2.9\tex/context/base/mkii\supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count95
+\scratchdimen=\dimen108
+\scratchbox=\box29
+\nofMPsegments=\count96
+\nofMParguments=\count97
+\everyMPshowfont=\toks19
+\MPscratchCnt=\count98
+\MPscratchDim=\dimen109
+\MPnumerator=\count99
+\makeMPintoPDFobject=\count100
+\everyMPtoPDFconversion=\toks20
+) ("C:\Program Files\MiKTeX 2.9\tex/latex/oberdiek\epstopdf-base.sty"
+Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
+
+("C:\Program Files\MiKTeX 2.9\tex/generic/oberdiek\infwarerr.sty"
+Package: infwarerr 2016/05/16 v1.4 Providing info/warning/error messages (HO)
+)
+("C:\Program Files\MiKTeX 2.9\tex/latex/oberdiek\grfext.sty"
+Package: grfext 2016/05/16 v1.2 Manage graphics extensions (HO)
+
+("C:\Program Files\MiKTeX 2.9\tex/generic/oberdiek\kvdefinekeys.sty"
+Package: kvdefinekeys 2016/05/16 v1.4 Define keys (HO)
+
+("C:\Program Files\MiKTeX 2.9\tex/generic/oberdiek\ltxcmds.sty"
+Package: ltxcmds 2016/05/16 v1.23 LaTeX kernel commands for general use (HO)
+)))
+("C:\Program Files\MiKTeX 2.9\tex/latex/oberdiek\kvoptions.sty"
+Package: kvoptions 2016/05/16 v3.12 Key value format for package options (HO)
+
+("C:\Program Files\MiKTeX 2.9\tex/generic/oberdiek\kvsetkeys.sty"
+Package: kvsetkeys 2016/05/16 v1.17 Key value parser (HO)
+
+("C:\Program Files\MiKTeX 2.9\tex/generic/oberdiek\etexcmds.sty"
+Package: etexcmds 2016/05/16 v1.6 Avoid name clashes with e-TeX commands (HO)
+
+("C:\Program Files\MiKTeX 2.9\tex/generic/oberdiek\ifluatex.sty"
+Package: ifluatex 2016/05/16 v1.4 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+))))
+("C:\Program Files\MiKTeX 2.9\tex/generic/oberdiek\pdftexcmds.sty"
+Package: pdftexcmds 2018/09/10 v0.29 Utility functions of pdfTeX for LuaTeX (HO
+)
+
+("C:\Program Files\MiKTeX 2.9\tex/generic/oberdiek\ifpdf.sty"
+Package: ifpdf 2018/09/07 v3.3 Provides the ifpdf switch
+)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+)
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+38.
+Package grfext Info: Graphics extension search list:
+(grfext)             [.pdf,.png,.jpg,.mps,.jpeg,.jbig2,.jb2,.PDF,.PNG,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 456.
+)
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 24.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 24.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 24.
+ (Report.toc
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 6.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 6.
+)
+\tf@toc=\write4
+\openout4 = `Report.toc'.
+
+
+[1
+
+{C:/Users/firey/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 33.
+
+("C:\Program Files\MiKTeX 2.9\tex/latex/base\omscmr.fd"
+File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 33.
+<Assets/overview.png, id=10, 271.0125pt x 218.0145pt>
+File: Assets/overview.png Graphic file (type png)
+<use Assets/overview.png>
+Package pdftex.def Info: Assets/overview.png  used on input line 44.
+(pdftex.def)             Requested size: 276.00105pt x 222.03583pt.
+ [2]
+<Assets/MAC_ADDR.png, id=16, 381.8265pt x 87.9285pt>
+File: Assets/MAC_ADDR.png Graphic file (type png)
+<use Assets/MAC_ADDR.png>
+Package pdftex.def Info: Assets/MAC_ADDR.png  used on input line 55.
+(pdftex.def)             Requested size: 276.00105pt x 63.56068pt.
+ [3 <./Assets/overview.png>]
+<Assets/client_class.png, id=21, 163.812pt x 100.57574pt>
+File: Assets/client_class.png Graphic file (type png)
+<use Assets/client_class.png>
+Package pdftex.def Info: Assets/client_class.png  used on input line 67.
+(pdftex.def)             Requested size: 103.50105pt x 63.54874pt.
+<Assets/client_list.png, id=22, 346.896pt x 70.46326pt>
+File: Assets/client_list.png Graphic file (type png)
+<use Assets/client_list.png>
+Package pdftex.def Info: Assets/client_list.png  used on input line 74.
+(pdftex.def)             Requested size: 345.0pt x 70.08138pt.
+ [4 <./Assets/MAC_ADDR.png> <./Assets/client_class.png> <./Assets/client_list.p
+ng>]
+<Assets/locks.png, id=29, 431.211pt x 52.39575pt>
+File: Assets/locks.png Graphic file (type png)
+<use Assets/locks.png>
+Package pdftex.def Info: Assets/locks.png  used on input line 81.
+(pdftex.def)             Requested size: 345.0pt x 41.92224pt.
+<Assets/token_python.png, id=30, 172.84575pt x 109.00725pt>
+File: Assets/token_python.png Graphic file (type png)
+<use Assets/token_python.png>
+Package pdftex.def Info: Assets/token_python.png  used on input line 88.
+(pdftex.def)             Requested size: 103.50105pt x 65.27344pt.
+<Assets/snake_params.png, id=31, 178.86826pt x 133.6995pt>
+File: Assets/snake_params.png Graphic file (type png)
+<use Assets/snake_params.png>
+Package pdftex.def Info: Assets/snake_params.png  used on input line 95.
+(pdftex.def)             Requested size: 103.50105pt x 77.36418pt.
+<Assets/light_up.png, id=32, 380.622pt x 49.3845pt>
+File: Assets/light_up.png Graphic file (type png)
+<use Assets/light_up.png>
+Package pdftex.def Info: Assets/light_up.png  used on input line 102.
+(pdftex.def)             Requested size: 345.0pt x 44.76512pt.
+ [5 <./Assets/locks.png> <./Assets/token_python.png> <./Assets/snake_params.png
+> <./Assets/light_up.png>]
+<Assets/run_server.png, id=40, 368.577pt x 174.6525pt>
+File: Assets/run_server.png Graphic file (type png)
+<use Assets/run_server.png>
+Package pdftex.def Info: Assets/run_server.png  used on input line 109.
+(pdftex.def)             Requested size: 345.0pt x 163.4858pt.
+<Assets/look.png, id=41, 256.5585pt x 134.30174pt>
+File: Assets/look.png Graphic file (type png)
+<use Assets/look.png>
+Package pdftex.def Info: Assets/look.png  used on input line 116.
+(pdftex.def)             Requested size: 310.4979pt x 162.55273pt.
+<Assets/timeout.png, id=42, 440.847pt x 117.43875pt>
+File: Assets/timeout.png Graphic file (type png)
+<use Assets/timeout.png>
+Package pdftex.def Info: Assets/timeout.png  used on input line 125.
+(pdftex.def)             Requested size: 345.0pt x 91.90468pt.
+ [6 <./Assets/run_server.png> <./Assets/look.png>]
+<Assets/except.png, id=48, 425.79076pt x 82.50826pt>
+File: Assets/except.png Graphic file (type png)
+<use Assets/except.png>
+Package pdftex.def Info: Assets/except.png  used on input line 132.
+(pdftex.def)             Requested size: 345.0pt x 66.85397pt.
+<Assets/if_mac.png, id=49, 187.902pt x 193.9245pt>
+File: Assets/if_mac.png Graphic file (type png)
+<use Assets/if_mac.png>
+Package pdftex.def Info: Assets/if_mac.png  used on input line 137.
+(pdftex.def)             Requested size: 172.5pt x 178.03688pt.
+<Assets/try.png, id=50, 466.74374pt x 43.362pt>
+File: Assets/try.png Graphic file (type png)
+<use Assets/try.png>
+Package pdftex.def Info: Assets/try.png  used on input line 144.
+(pdftex.def)             Requested size: 345.0pt x 32.05295pt.
+ [7 <./Assets/timeout.png> <./Assets/except.png> <./Assets/if_mac.png>] [8 <./A
+ssets/try.png>]
+<Assets/input.png, id=62, 540.21825pt x 373.99725pt>
+File: Assets/input.png Graphic file (type png)
+<use Assets/input.png>
+Package pdftex.def Info: Assets/input.png  used on input line 161.
+(pdftex.def)             Requested size: 276.00105pt x 191.08417pt.
+ [9 <./Assets/input.png>]
+<Assets/c.png, id=67, 492.03825pt x 245.718pt>
+File: Assets/c.png Graphic file (type png)
+<use Assets/c.png>
+Package pdftex.def Info: Assets/c.png  used on input line 178.
+(pdftex.def)             Requested size: 170.71652pt x 85.25272pt.
+<Assets/co.png, id=68, 481.8pt x 233.673pt>
+File: Assets/co.png Graphic file (type png)
+<use Assets/co.png>
+Package pdftex.def Info: Assets/co.png  used on input line 180.
+(pdftex.def)             Requested size: 170.71652pt x 82.79582pt.
+<Assets/conn.png, id=69, 477.58424pt x 233.673pt>
+File: Assets/conn.png Graphic file (type png)
+<use Assets/conn.png>
+Package pdftex.def Info: Assets/conn.png  used on input line 182.
+(pdftex.def)             Requested size: 170.71652pt x 83.52676pt.
+<Assets/onn.png, id=70, 478.78876pt x 233.07076pt>
+File: Assets/onn.png Graphic file (type png)
+<use Assets/onn.png>
+Package pdftex.def Info: Assets/onn.png  used on input line 184.
+(pdftex.def)             Requested size: 170.71652pt x 83.10165pt.
+<Assets/nne.png, id=71, 478.78876pt x 237.88875pt>
+File: Assets/nne.png Graphic file (type png)
+<use Assets/nne.png>
+Package pdftex.def Info: Assets/nne.png  used on input line 186.
+(pdftex.def)             Requested size: 170.71652pt x 84.81952pt.
+<Assets/nec.png, id=72, 477.58424pt x 233.673pt>
+File: Assets/nec.png Graphic file (type png)
+<use Assets/nec.png>
+Package pdftex.def Info: Assets/nec.png  used on input line 188.
+(pdftex.def)             Requested size: 170.71652pt x 83.52676pt.
+<Assets/ect.png, id=73, 478.78876pt x 233.673pt>
+File: Assets/ect.png Graphic file (type png)
+<use Assets/ect.png>
+Package pdftex.def Info: Assets/ect.png  used on input line 190.
+(pdftex.def)             Requested size: 170.71652pt x 83.31639pt.
+<Assets/cti.png, id=74, 476.982pt x 225.84375pt>
+File: Assets/cti.png Graphic file (type png)
+<use Assets/cti.png>
+Package pdftex.def Info: Assets/cti.png  used on input line 192.
+(pdftex.def)             Requested size: 170.71652pt x 80.83156pt.
+<Assets/tin.png, id=75, 476.982pt x 227.04825pt>
+File: Assets/tin.png Graphic file (type png)
+<use Assets/tin.png>
+Package pdftex.def Info: Assets/tin.png  used on input line 194.
+(pdftex.def)             Requested size: 170.71652pt x 81.26266pt.
+<Assets/ing.png, id=76, 477.58424pt x 238.491pt>
+File: Assets/ing.png Graphic file (type png)
+<use Assets/ing.png>
+Package pdftex.def Info: Assets/ing.png  used on input line 196.
+(pdftex.def)             Requested size: 170.71652pt x 85.24896pt.
+<Assets/ng.png, id=77, 479.99326pt x 230.66174pt>
+File: Assets/ng.png Graphic file (type png)
+<use Assets/ng.png>
+Package pdftex.def Info: Assets/ng.png  used on input line 198.
+(pdftex.def)             Requested size: 170.71652pt x 82.03859pt.
+<Assets/g.png, id=78, 474.573pt x 233.07076pt>
+File: Assets/g.png Graphic file (type png)
+<use Assets/g.png>
+Package pdftex.def Info: Assets/g.png  used on input line 200.
+(pdftex.def)             Requested size: 170.71652pt x 83.84138pt.
+
+Overfull \hbox (20.43304pt too wide) in paragraph at lines 174--203
+ [][] 
+ []
+
+[10 <./Assets/c.png> <./Assets/co.png> <./Assets/conn.png> <./Assets/onn.png> <
+./Assets/nne.png> <./Assets/nec.png> <./Assets/ect.png> <./Assets/cti.png> <./A
+ssets/tin.png> <./Assets/ing.png> <./Assets/ng.png> <./Assets/g.png>]
+<Assets/circuit.png, id=94, 1084.05pt x 582.175pt>
+File: Assets/circuit.png Graphic file (type png)
+<use Assets/circuit.png>
+Package pdftex.def Info: Assets/circuit.png  used on input line 229.
+(pdftex.def)             Requested size: 327.74895pt x 176.01299pt.
+ [11 <./Assets/circuit.png>]
+<Assets/Comments.png, id=99, 366.168pt x 215.00325pt>
+File: Assets/Comments.png Graphic file (type png)
+<use Assets/Comments.png>
+Package pdftex.def Info: Assets/Comments.png  used on input line 238.
+(pdftex.def)             Requested size: 345.0pt x 202.57877pt.
+<Assets/fcntl.png, id=100, 447.47176pt x 74.07675pt>
+File: Assets/fcntl.png Graphic file (type png)
+<use Assets/fcntl.png>
+Package pdftex.def Info: Assets/fcntl.png  used on input line 246.
+(pdftex.def)             Requested size: 345.0pt x 57.11273pt.
+<Assets/Makefile.png, id=101, 385.44pt x 178.86826pt>
+File: Assets/Makefile.png Graphic file (type png)
+<use Assets/Makefile.png>
+Package pdftex.def Info: Assets/Makefile.png  used on input line 253.
+(pdftex.def)             Requested size: 276.00105pt x 128.08087pt.
+ [12 <./Assets/Comments.png> <./Assets/fcntl.png>]
+<Assets/global_constants.png, id=107, 327.02174pt x 196.93575pt>
+File: Assets/global_constants.png Graphic file (type png)
+<use Assets/global_constants.png>
+Package pdftex.def Info: Assets/global_constants.png  used on input line 263.
+(pdftex.def)             Requested size: 258.75pt x 155.82993pt.
+<Assets/modifiable_globals.png, id=108, 326.4195pt x 263.18324pt>
+File: Assets/modifiable_globals.png Graphic file (type png)
+<use Assets/modifiable_globals.png>
+Package pdftex.def Info: Assets/modifiable_globals.png  used on input line 269.
+
+(pdftex.def)             Requested size: 258.75pt x 208.6273pt.
+ [13 <./Assets/Makefile.png> <./Assets/global_constants.png>]
+<Assets/hardware_token.png, id=115, 429.40425pt x 431.81325pt>
+File: Assets/hardware_token.png Graphic file (type png)
+<use Assets/hardware_token.png>
+Package pdftex.def Info: Assets/hardware_token.png  used on input line 278.
+(pdftex.def)             Requested size: 258.75pt x 260.21664pt.
+ [14 <./Assets/modifiable_globals.png> <./Assets/hardware_token.png>]
+<Assets/int_to_display.png, id=121, 324.0105pt x 215.00325pt>
+File: Assets/int_to_display.png Graphic file (type png)
+<use Assets/int_to_display.png>
+Package pdftex.def Info: Assets/int_to_display.png  used on input line 291.
+(pdftex.def)             Requested size: 345.0pt x 228.93576pt.
+<Assets/char_to_display.png, id=122, 343.88475pt x 213.79875pt>
+File: Assets/char_to_display.png Graphic file (type png)
+<use Assets/char_to_display.png>
+Package pdftex.def Info: Assets/char_to_display.png  used on input line 297.
+(pdftex.def)             Requested size: 345.0pt x 214.49634pt.
+ [15 <./Assets/int_to_display.png>]
+<Assets/blink_segment.png, id=127, 503.481pt x 389.65575pt>
+File: Assets/blink_segment.png Graphic file (type png)
+<use Assets/blink_segment.png>
+Package pdftex.def Info: Assets/blink_segment.png  used on input line 303.
+(pdftex.def)             Requested size: 345.0pt x 267.0077pt.
+
+[16 <./Assets/char_to_display.png> <./Assets/blink_segment.png>]
+<Assets/MAC_ADDR_C.png, id=133, 379.4175pt x 452.892pt>
+File: Assets/MAC_ADDR_C.png Graphic file (type png)
+<use Assets/MAC_ADDR_C.png>
+Package pdftex.def Info: Assets/MAC_ADDR_C.png  used on input line 314.
+(pdftex.def)             Requested size: 293.2521pt x 350.04782pt.
+ [17 <./Assets/MAC_ADDR_C.png>]
+<Assets/handlers.png, id=138, 434.22224pt x 166.221pt>
+File: Assets/handlers.png Graphic file (type png)
+<use Assets/handlers.png>
+Package pdftex.def Info: Assets/handlers.png  used on input line 327.
+(pdftex.def)             Requested size: 345.0pt x 132.0664pt.
+ [18 <./Assets/handlers.png>]
+<Assets/PCB.png, id=143, 770.88pt x 511.9125pt>
+File: Assets/PCB.png Graphic file (type png)
+<use Assets/PCB.png>
+Package pdftex.def Info: Assets/PCB.png  used on input line 340.
+(pdftex.def)             Requested size: 172.5pt x 114.55045pt.
+<Assets/RFID.png, id=144, 455.90324pt x 371.58826pt>
+File: Assets/RFID.png Graphic file (type png)
+<use Assets/RFID.png>
+Package pdftex.def Info: Assets/RFID.png  used on input line 349.
+(pdftex.def)             Requested size: 172.5pt x 140.59831pt.
+ [19 <./Assets/PCB.png> <./Assets/RFID.png>]
+<Assets/Timeline.png, id=151, 561.297pt x 251.7405pt>
+File: Assets/Timeline.png Graphic file (type png)
+<use Assets/Timeline.png>
+Package pdftex.def Info: Assets/Timeline.png  used on input line 358.
+(pdftex.def)             Requested size: 345.0pt x 154.73305pt.
+ [20 <./Assets/Timeline.png>] (Report.aux) ) 
+Here is how much of TeX's memory you used:
+ 2526 strings out of 492895
+ 37407 string characters out of 3133479
+ 108243 words of memory out of 3000000
+ 6361 multiletter control sequences out of 15000+200000
+ 7895 words of font info for 28 fonts, out of 3000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 41i,11n,25p,1900b,298s stack positions out of 5000i,500n,10000p,200000b,50000s
+<C:/Program Files/MiKTeX 2.9/fonts/
+type1/public/amsfonts/cm/cmbx10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/pu
+blic/amsfonts/cm/cmbx12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/ams
+fonts/cm/cmmi10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm
+/cmr10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pf
+b><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Pro
+gram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
+Output written on Report.pdf (20 pages, 10620415 bytes).
+PDF statistics:
+ 179 PDF objects out of 1000 (max. 8388607)
+ 0 named destinations out of 1000 (max. 500000)
+ 211 words of extra memory for PDF output out of 10000 (max. 10000000)
+
